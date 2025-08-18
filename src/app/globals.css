@@ -1,0 +1,23 @@
+:root {
+	--border-color: #38343d;
+	--light-border-color: #48444f;
+	--text-color: #fcfafe;
+	--light-text-color: #e9e2f0;
+	--background-color: #181718;
+	--light-background-color: #1d1d1f;
+	background: var(--background-color);
+	color: var(--text-color);
+	font-family: Montserrat;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: inherit;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}

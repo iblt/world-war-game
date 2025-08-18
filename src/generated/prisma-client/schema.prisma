@@ -9,18 +9,95 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name      String?  @unique
-  password  String
-  Game      Game[]
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  name          String?  @unique
+  password      String
+  currentGameId Int? // пользователь может быть без игры
+  CurrentGame   Game?    @relation("player", fields: [currentGameId], references: [id])
+  GamesCreated  Game[]   @relation("creator")
 }
 
 model Game {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id              Int           @id @default(autoincrement())
+  name            String
+  password        String
+  ecologicalLevel Int           @default(75)
+  isActive        Boolean       @default(true)
+  creatorId       Int
+  creator         User          @relation("creator", fields: [creatorId], references: [id])
+  players         User[]        @relation("player")
+  GameCity        GameCity[]
+  GameCountry     GameCountry[]
+  Team            Team[]
+}
+
+model Team {
+  id                Int         @id @default(autoincrement())
+  hasNuclearWeapons Boolean     @default(false)
+  bombsCount        Int         @default(0)
+  money             Int         @default(500)
+  gameCountryId     Int
+  gameId            Int
+  GameCountry       GameCountry @relation(fields: [gameCountryId], references: [id])
+  Game              Game        @relation(fields: [gameId], references: [id])
+  Sanctions         Sanctions[] @relation("TeamSanctions")
+  IncomingSanctions Sanctions[] @relation("SanctionedTeam")
+}
+
+model Country {
+  id          Int           @id @default(autoincrement())
+  name        String
+  City        City[]
+  GameCountry GameCountry[]
+
+  @@unique([name]) // глобально уникальные страны
+}
+
+model City {
+  id        Int     @id @default(autoincrement())
   name      String
-  password  String
-  creatorId Int
-  creator   User     @relation(fields: [creatorId], references: [id])
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+
+  GameCity GameCity[]
+
+  @@unique([name, countryId]) // уникальность внутри страны
+}
+
+model GameCity {
+  id               Int  @id @default(autoincrement())
+  gameId           Int
+  cityId           Int
+  game             Game @relation(fields: [gameId], references: [id])
+  city             City @relation(fields: [cityId], references: [id])
+  protectionLevel  Int  @default(1)
+  standartOfLiving Int  @default(100)
+  revenue          Int  @default(100)
+  developmentLevel Int  @default(0)
+
+  @@unique([gameId, cityId])
+}
+
+model GameCountry {
+  id        Int     @id @default(autoincrement())
+  gameId    Int
+  countryId Int
+  game      Game    @relation(fields: [gameId], references: [id])
+  country   Country @relation(fields: [countryId], references: [id])
+  isActive  Boolean @default(true)
+
+  Team Team[]
+
+  @@unique([gameId, countryId])
+}
+
+model Sanctions {
+  id               Int  @id @default(autoincrement())
+  teamId           Int
+  sanctionedTeamId Int
+  team             Team @relation("TeamSanctions", fields: [teamId], references: [id])
+  sanctionedTeam   Team @relation("SanctionedTeam", fields: [sanctionedTeamId], references: [id])
+
+  @@unique([teamId, sanctionedTeamId])
 }

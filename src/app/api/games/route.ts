@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
 	try {
 		const body = await req.json()
 
-		const password = await bcrypt.hash(body.password, 5)
+		const password = await bcrypt.hash(body.password, 10)
 		const game = await prisma.game.create({
 			data: {
 				name: body.name,

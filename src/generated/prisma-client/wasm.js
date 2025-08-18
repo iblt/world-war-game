@@ -124,15 +124,60 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   name: 'name',
-  password: 'password'
+  password: 'password',
+  currentGameId: 'currentGameId'
 };
 
 exports.Prisma.GameScalarFieldEnum = {
   id: 'id',
-  createdAt: 'createdAt',
   name: 'name',
   password: 'password',
+  ecologicalLevel: 'ecologicalLevel',
+  isActive: 'isActive',
   creatorId: 'creatorId'
+};
+
+exports.Prisma.TeamScalarFieldEnum = {
+  id: 'id',
+  hasNuclearWeapons: 'hasNuclearWeapons',
+  bombsCount: 'bombsCount',
+  money: 'money',
+  gameCountryId: 'gameCountryId',
+  gameId: 'gameId'
+};
+
+exports.Prisma.CountryScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.CityScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  countryId: 'countryId'
+};
+
+exports.Prisma.GameCityScalarFieldEnum = {
+  id: 'id',
+  gameId: 'gameId',
+  cityId: 'cityId',
+  protectionLevel: 'protectionLevel',
+  standartOfLiving: 'standartOfLiving',
+  revenue: 'revenue',
+  developmentLevel: 'developmentLevel'
+};
+
+exports.Prisma.GameCountryScalarFieldEnum = {
+  id: 'id',
+  gameId: 'gameId',
+  countryId: 'countryId',
+  isActive: 'isActive'
+};
+
+exports.Prisma.SanctionsScalarFieldEnum = {
+  id: 'id',
+  teamId: 'teamId',
+  sanctionedTeamId: 'sanctionedTeamId'
 };
 
 exports.Prisma.SortOrder = {
@@ -153,7 +198,13 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Game: 'Game'
+  Game: 'Game',
+  Team: 'Team',
+  Country: 'Country',
+  City: 'City',
+  GameCity: 'GameCity',
+  GameCountry: 'GameCountry',
+  Sanctions: 'Sanctions'
 };
 
 /**
