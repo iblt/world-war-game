@@ -33,8 +33,8 @@ export async function middleware(req: NextRequest) {
 	}
 
 	try {
-		const payload = jwtVerify(accessToken, secret)
-		const userId = getUserIdByJwt(payload)
+		const result = await jwtVerify(accessToken, secret)
+		const userId = getUserIdByJwt(result.payload)
 
 		if (!userId) {
 			return NextResponse.redirect(new URL(ROUTES.LOGIN, req.url))

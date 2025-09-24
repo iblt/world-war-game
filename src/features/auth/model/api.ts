@@ -48,5 +48,6 @@ export const getAuth = async () => {
 		throw new Error(errorMessage)
 	}
 	const data = await res.json()
+
 	return data as UserResponse
 }

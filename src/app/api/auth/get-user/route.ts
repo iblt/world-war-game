@@ -31,7 +31,7 @@ export const GET = async (req: Request) => {
 			},
 		})
 
-		return { id: user.id, name: user.name }
+		return NextResponse.json({ id: user.id, name: user.name })
 	} catch (error) {
 		return NextResponse.json(
 			{ error: `Ошибка авторизации: ${getErrorMessage(error)}` },

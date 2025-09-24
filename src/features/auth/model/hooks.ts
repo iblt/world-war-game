@@ -1,5 +1,5 @@
 import { QUERY_KEYS } from '@/constants'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getAuth, login, register } from './api'
 
 export const useLogin = () => {
@@ -25,12 +25,10 @@ export const useRegister = () => {
 }
 
 export const useAuth = () => {
-	const queryClient = useQueryClient()
-
-	return useMutation({
-		mutationFn: getAuth,
-		onSuccess: data => {
-			queryClient.setQueryData([QUERY_KEYS.USER], data)
-		},
+	return useQuery({
+		queryKey: [QUERY_KEYS.USER],
+		queryFn: getAuth,
+		refetchInterval: 10 * 60 * 1000,
+		refetchOnWindowFocus: false,
 	})
 }

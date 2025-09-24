@@ -51,7 +51,6 @@ export const POST = async (req: NextRequest) => {
 		const res = NextResponse.json({ access: newAccess }, { status: 200 })
 
 		res.cookies.set(COOKIES.ACCESS_TOKEN, newAccess, {
-			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',
 			path: '/',

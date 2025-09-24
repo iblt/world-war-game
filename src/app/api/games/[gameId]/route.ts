@@ -34,7 +34,7 @@ export const GET = async (
 			if (user.currentGameId !== +gameId) {
 				return NextResponse.json(
 					{ error: 'Эта игра вам недоступна' },
-					{ status: 402 }
+					{ status: 403 }
 				)
 			}
 		} catch (error) {
@@ -98,6 +98,6 @@ export const POST = async (
 		const isPasswordRight = await bcrypt.compare(body.password, game.password)
 		if (!isPasswordRight) throw new Error('Неверный пароль')
 	} catch (error) {
-		NextResponse.json({ error: getErrorMessage(error) }, { status: 400 })
+		return NextResponse.json({ error: getErrorMessage(error) }, { status: 400 })
 	}
 }

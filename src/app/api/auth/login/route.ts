@@ -51,7 +51,6 @@ export const POST = async (req: NextRequest) => {
 		})
 
 		res.cookies.set(COOKIES.ACCESS_TOKEN, access, {
-			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',
 			path: '/',

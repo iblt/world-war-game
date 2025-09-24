@@ -44,7 +44,13 @@ export const CreateGamePopup = ({ onClose }: CreateGamePopupProps) => {
 						name={'name'}
 						control={control}
 						render={({ field: { value, onChange } }) => (
-							<Input type='text' value={value} onChange={onChange} required />
+							<Input
+								type='text'
+								value={value}
+								onChange={onChange}
+								required
+								autoComplete='name'
+							/>
 						)}
 					/>
 				</label>
@@ -52,7 +58,7 @@ export const CreateGamePopup = ({ onClose }: CreateGamePopupProps) => {
 				<label>
 					Пароль
 					<Controller
-						name={'name'}
+						name={'password'}
 						control={control}
 						render={({ field: { value, onChange } }) => (
 							<Input
@@ -60,6 +66,7 @@ export const CreateGamePopup = ({ onClose }: CreateGamePopupProps) => {
 								value={value}
 								onChange={onChange}
 								required
+								autoComplete='new-password'
 							/>
 						)}
 					/>
