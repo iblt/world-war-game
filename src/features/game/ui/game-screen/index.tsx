@@ -47,7 +47,7 @@ export function GameScreen({ gameId }: { gameId: string }) {
 						return <CountryPanel game={game} playerId={playerId} />
 
 					case GamePhase.WAITING_UN:
-						return <Waiting text='Ожидание ООН...' />
+						return <Waiting text='Отправляйтесь на заседание ООН' />
 
 					case GamePhase.UN_STATS:
 						return <UNStats game={game} />

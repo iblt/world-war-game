@@ -2,23 +2,20 @@ export function calculateLife({
 	baseLife,
 	ecology,
 	sanctionsCount,
+	development,
 }: {
 	baseLife: number
 	ecology: number
 	sanctionsCount: number
-}) {
-	const E = ecology / 100
-	const S = Math.min(sanctionsCount, 3)
-
-	return Math.round(baseLife * (0.5 + 0.5 * E) * (1 - 0.2 * S))
-}
-
-export function calculateIncome({
-	life,
-	development,
-}: {
-	life: number
 	development: number
 }) {
-	return Math.round(2.2 * life + 0.8 * development)
+	const E = ecology / 100
+	const S =
+		sanctionsCount > 0 ? (100 - (40 + 5 * (sanctionsCount - 1))) / 100 : 1
+
+	return Math.round((baseLife + development - 60) * E * S)
+}
+
+export function calculateIncome({ life }: { life: number }) {
+	return Math.round(3 * life)
 }

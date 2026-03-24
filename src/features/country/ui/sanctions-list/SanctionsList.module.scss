@@ -1,0 +1,39 @@
+.section {
+	display: flex;
+	gap: 40px;
+}
+
+.block {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: var(--light-background-color);
+	border-radius: 8px;
+	padding: 20px;
+	flex-grow: 1;
+	width: 100%;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	list-style: none;
+}
+
+.country {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 4px 4px;
+	border-bottom: 2px solid var(--border-color);
+	cursor: pointer;
+
+	&:has(:disabled) {
+		cursor: default;
+	}
+}
+
+.checkbox {
+	accent-color: var(--background-color);
+}

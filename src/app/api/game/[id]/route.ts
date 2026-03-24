@@ -23,10 +23,33 @@ export async function GET(
 							include: {
 								template: true,
 							},
+							orderBy: {
+								template: {
+									order: 'asc',
+								},
+							},
 						},
 						players: {
 							include: {
 								player: true,
+							},
+						},
+						sanctionsFrom: {
+							select: {
+								toCountry: {
+									select: {
+										id: true,
+									},
+								},
+							},
+						},
+						sanctionsTo: {
+							select: {
+								fromCountry: {
+									select: {
+										id: true,
+									},
+								},
 							},
 						},
 					},
@@ -85,6 +108,9 @@ export async function GET(
 						countryId: p.countryId,
 						playerId: p.playerId,
 					})),
+
+					sanctionsFrom: c.sanctionsFrom.map(sanction => sanction.toCountry.id),
+					sanctionsTo: c.sanctionsTo.map(sanction => sanction.fromCountry.id),
 				})),
 			},
 		}

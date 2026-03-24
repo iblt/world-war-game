@@ -14,6 +14,7 @@ import { IconShield } from '@/ui/icons/Shield'
 import { GameTurn } from '@prisma/client'
 import clsx from 'clsx'
 import { CountriesList } from '../countries-list'
+import { SanctionsList } from '../sanctions-list'
 import styles from './CountryPanel.module.scss'
 
 const CITY_UPGRADE_PRICE = 150
@@ -35,6 +36,12 @@ export function CountryPanel({
 	const [selectedCities, setSelectedCities] = useState<string[]>([])
 	const [protectedCities, setProtectedCities] = useState<string[]>([])
 	const [attackedCities, setAttackedCities] = useState<string[]>([])
+	const [sanctionedCountries, setSanctionedCountries] = useState<string[]>(
+		game.countries.find(
+			country =>
+				country.players.findIndex(player => player.playerId === playerId) > -1
+		)?.sanctionsTo ?? []
+	)
 
 	const [isEcologyProgram, setEcologyProgram] = useState(false)
 	const [isNuclearProgram, setNuclearProgram] = useState(false)
@@ -48,6 +55,9 @@ export function CountryPanel({
 		const turn: GameTurn = turnData.turn
 
 		setSelectedCities(turn.updatedCities ? turn.updatedCities.split(',') : [])
+		setSanctionedCountries(
+			turn.sanctionedCountries ? turn.sanctionedCountries.split(',') : []
+		)
 
 		setNukes(turn.buildNukes || 0)
 		setEcologyProgram(turn.ecoProgram || false)
@@ -69,6 +79,7 @@ export function CountryPanel({
 					ecoProgram: isEcologyProgram,
 					attackedCities: attackedCities.join(','),
 					protectedCities: protectedCities.join(','),
+					sanctionedCountries: sanctionedCountries.join(','),
 				}),
 			})
 		},
@@ -113,6 +124,14 @@ export function CountryPanel({
 		)
 	}
 
+	const toggleSanctionCountry = (countryId: string) => {
+		setSanctionedCountries(prev =>
+			prev.includes(countryId)
+				? prev.filter(id => id !== countryId)
+				: [...prev, countryId]
+		)
+	}
+
 	const toggleAttackCity = (cityId: string) => {
 		setAttackedCities(prev =>
 			prev.includes(cityId)
@@ -123,14 +142,14 @@ export function CountryPanel({
 
 	const cities = myCountry.cities.map(city => {
 		const life = calculateLife({
-			baseLife: city.life,
+			baseLife: city.template.baseLife,
 			ecology: game.ecology,
 			sanctionsCount: 0,
+			development: city.development,
 		})
 
 		const income = calculateIncome({
 			life,
-			development: city.development,
 		})
 
 		return {
@@ -168,61 +187,80 @@ export function CountryPanel({
 		setNukes(Math.min(i + 1, canBuyRockets))
 	}
 
+	const countries = game.countries.filter(
+		country => country.players.length > 0 && country.id !== myCountry.id
+	)
+
+	console.log(myCountry)
+
 	return (
-		<div className={styles.container}>
-			<h2>{myCountry.name}</h2>
+		<section className={styles.container}>
+			<h2>
+				{myCountry.name} (раунд {game.round})
+			</h2>
 
-			<div className={styles.cities}>
-				{cities.map(city => {
-					const isSelected = selectedCities.includes(city.id)
-					const isProtected = protectedCities.includes(city.id)
+			<section className={styles.top}>
+				<ul className={styles.cities}>
+					{cities.map(city => {
+						const isSelected = selectedCities.includes(city.id)
+						const isProtected = protectedCities.includes(city.id)
 
-					return (
-						<div
-							key={city.id}
-							className={clsx(styles.cityCard, {
-								[styles.destroyed]: city.protection < 1,
-							})}
-						>
-							{city.protection > 1 && <IconShield className={styles.shield} />}
-							<div className={styles.cityName}>{city.template.name}</div>
+						return (
+							<li
+								key={city.id}
+								className={clsx(styles.cityCard, {
+									[styles.destroyed]: city.protection < 1,
+								})}
+							>
+								{city.protection > 1 && (
+									<IconShield size={32} className={styles.shield} />
+								)}
+								<div className={styles.cityName}>{city.template.name}</div>
 
-							<div>Развитие: {city.development}%</div>
-							<div>Ур. жизни: {city.calculatedLife.toFixed(0)}%</div>
-							<div>Доход: {city.income.toFixed(0)}</div>
+								<div>Развитие: {city.development}%</div>
+								<div>Ур. жизни: {city.calculatedLife.toFixed(0)}%</div>
+								<div>Доход: {city.income.toFixed(0)}</div>
 
-							{isPresident && (
-								<>
-									<label className={styles.checkbox}>
-										<input
-											type='checkbox'
-											checked={isSelected}
-											onChange={() => toggleCity(city.id)}
-											disabled={
-												allDisabled ||
-												(!isSelected && budget < CITY_UPGRADE_PRICE)
-											}
-										/>
-										Улучшить ({CITY_UPGRADE_PRICE})
-									</label>
-									<label className={styles.checkbox}>
-										<input
-											type='checkbox'
-											checked={isProtected}
-											onChange={() => toggleProtectCity(city.id)}
-											disabled={
-												(!isProtected && budget < SHIELD_PRICE) ||
-												city.protection !== 1
-											}
-										/>
-										Защитить город ({SHIELD_PRICE})
-									</label>
-								</>
-							)}
-						</div>
-					)
-				})}
-			</div>
+								{isPresident && (
+									<>
+										<label className={styles.checkbox}>
+											<input
+												type='checkbox'
+												checked={isSelected}
+												onChange={() => toggleCity(city.id)}
+												disabled={
+													allDisabled ||
+													(!isSelected && budget < CITY_UPGRADE_PRICE)
+												}
+											/>
+											Улучшить ({CITY_UPGRADE_PRICE})
+										</label>
+										<label className={styles.checkbox}>
+											<input
+												type='checkbox'
+												checked={isProtected}
+												onChange={() => toggleProtectCity(city.id)}
+												disabled={
+													(!isProtected && budget < SHIELD_PRICE) ||
+													city.protection !== 1
+												}
+											/>
+											Защитить город ({SHIELD_PRICE})
+										</label>
+									</>
+								)}
+							</li>
+						)
+					})}
+				</ul>
+
+				<div className={styles.summary}>
+					<div>Бомб: {myCountry.nukes} 🚀</div>
+					<div>Бюджет: {budget.toFixed(0)} 💲</div>
+					<div>Доход за раунд: {totalIncome.toFixed(0)} 💱</div>
+					<div>Средний уровень жизни: {avgLife.toFixed(0)}% 💖</div>
+				</div>
+			</section>
 
 			<div className={styles.nuclear}>
 				<header className={styles.header}>
@@ -267,12 +305,23 @@ export function CountryPanel({
 				)}
 			</div>
 
-			<div className={styles.summary}>
-				<div>Средний уровень жизни: {avgLife.toFixed(0)}% 💖</div>
-				<div>Доход за раунд: {totalIncome.toFixed(0)} 💱</div>
-				<div>Бомб: {myCountry.nukes} 🚀</div>
-				<div>Бюджет: {budget.toFixed(0)} 💲</div>
-			</div>
+			{!isPresident && <div>Только президент может управлять</div>}
+
+			<SanctionsList
+				sanctionsFrom={myCountry.sanctionsFrom}
+				sanctionedCountries={sanctionedCountries}
+				toggleSanctionCountry={toggleSanctionCountry}
+				countries={countries}
+				allDisabled={allDisabled}
+			/>
+
+			<CountriesList
+				nukes={myCountry.nukes}
+				countries={countries}
+				attackedCities={attackedCities}
+				toggleCity={toggleAttackCity}
+				isPresident={isPresident}
+			/>
 
 			{isPresident && (
 				<div className={styles.actions}>
@@ -281,15 +330,6 @@ export function CountryPanel({
 					</Button>
 				</div>
 			)}
-
-			{!isPresident && <div>Только президент может управлять</div>}
-			<CountriesList
-				game={game}
-				myCountry={myCountry}
-				attackedCities={attackedCities}
-				toggleCity={toggleAttackCity}
-				isPresident={isPresident}
-			/>
-		</div>
+		</section>
 	)
 }

@@ -51,6 +51,7 @@ export async function POST(req: Request) {
 		}[] = []
 		const countryBudgetChanges = new Map<string, number>()
 		const countryNukes = new Map<string, number>()
+		const sanctions = new Map<string, string[]>()
 		const countryHasNuclear = new Set<string>()
 		const countryNukesSpent = new Map<string, number>()
 
@@ -66,6 +67,16 @@ export async function POST(req: Request) {
 			const attackedCities = turn.attackedCities?.length
 				? turn.attackedCities.split(',')
 				: []
+
+			const sanctionedCountries = turn.sanctionedCountries?.length
+				? turn.sanctionedCountries.split(',')
+				: []
+
+			if (sanctionedCountries.length > 0) {
+				const current = sanctions.get(turn.countryId) ?? []
+
+				sanctions.set(turn.countryId, [...current, ...sanctionedCountries])
+			}
 
 			if (attackedCities.length > 0) {
 				ecologyDelta -= 5 * attackedCities.length
@@ -133,58 +144,74 @@ export async function POST(req: Request) {
 			}
 		}
 
+		const updatesMap = new Map<
+			string,
+			{ dev: boolean; attacks: number; shield: boolean }
+		>()
+
+		for (const update of cityUpdates) {
+			const current = updatesMap.get(update.id) ?? {
+				dev: false,
+				attacks: 0,
+				shield: false,
+			}
+
+			if (update.dev) current.dev = true
+			if (update.attack) current.attacks++
+			if (update.shield) current.shield = true
+
+			updatesMap.set(update.id, current)
+		}
+
 		await prisma.$transaction(async tx => {
 			const citiesBefore = await tx.gameCity.findMany({
 				where: { gameId },
+				include: {
+					template: {
+						select: {
+							baseLife: true,
+						},
+					},
+				},
 			})
+
+			const sanctionsList = Array.from(sanctions.entries()).flatMap(
+				([fromId, toIds]) =>
+					toIds.map(id => ({
+						fromCountryId: fromId,
+						toCountryId: id,
+						gameId,
+					}))
+			)
+
+			await tx.sanction.deleteMany({
+				where: { gameId },
+			})
+
+			if (sanctionsList.length > 0) {
+				await tx.sanction.createMany({
+					data: sanctionsList,
+				})
+			}
 
 			const incomeMap = new Map<string, number>()
 
-			for (const city of citiesBefore) {
+			for (const city of citiesBefore.filter(city => city.protection > 0)) {
 				const life = calculateLife({
-					baseLife: city.life,
+					baseLife: city.template.baseLife,
 					ecology: game.ecology,
 					sanctionsCount: 0,
+					development: city.development,
 				})
 
 				const income = calculateIncome({
 					life,
-					development: city.development,
 				})
 
 				incomeMap.set(
 					city.countryId,
 					(incomeMap.get(city.countryId) || 0) + income
 				)
-			}
-
-			for (const update of cityUpdates) {
-				if (update.dev) {
-					await tx.gameCity.update({
-						where: { id: update.id },
-						data: {
-							development: { increment: 20 },
-						},
-					})
-				}
-
-				if (update.shield) {
-					await tx.gameCity.update({
-						where: { id: update.id },
-						data: {
-							protection: 2,
-						},
-					})
-				}
-
-				if (update.attack) {
-					await tx.gameCity.update({
-						where: { id: update.id },
-						data: {
-							protection: { decrement: 1 },
-						},
-					})
-				}
 			}
 
 			const newEcology = game.ecology + ecologyDelta
@@ -216,22 +243,42 @@ export async function POST(req: Request) {
 				})
 
 				for (const city of country.cities) {
-					if (city.protection < 1) {
+					const update = updatesMap.get(city.id)
+
+					const attacksCount = update?.attacks ?? 0
+					const hasShield = update?.shield ?? false
+					const isDeveloped = update?.dev ?? false
+
+					let finalProtection = city.protection
+
+					if (hasShield) {
+						finalProtection = 2
+					}
+
+					finalProtection -= attacksCount
+
+					const development = city.development + (isDeveloped ? 20 : 0)
+
+					if (finalProtection <= 0) {
 						await tx.gameCity.update({
 							where: { id: city.id },
 							data: {
 								life: 0,
 								development: 0,
+								protection: 0,
 							},
 						})
 					} else {
 						await tx.gameCity.update({
 							where: { id: city.id },
 							data: {
+								protection: finalProtection,
+								development,
 								life: calculateLife({
 									baseLife: city.template.baseLife,
 									ecology: game.ecology,
 									sanctionsCount: 0,
+									development,
 								}),
 							},
 						})

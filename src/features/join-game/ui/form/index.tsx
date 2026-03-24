@@ -32,7 +32,14 @@ export function JoinGameForm() {
 
 			{errors.playerName && <p>{errors.playerName.message}</p>}
 
-			<Input {...register('code')} placeholder='Код комнаты' />
+			<Input
+				{...register('code')}
+				onChange={e => {
+					e.target.value = e.target.value.toLocaleUpperCase()
+					register('code').onChange(e)
+				}}
+				placeholder='Код комнаты'
+			/>
 
 			{errors.code && <p>{errors.code.message}</p>}
 

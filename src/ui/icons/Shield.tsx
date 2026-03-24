@@ -4,7 +4,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const IconShield = ({
-	size = 40,
+	size = 24,
 	fill = '#4ccc55',
 	...props
 }: IconProps) => {

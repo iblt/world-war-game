@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRoundControl } from '../../model/useRoundControl'
 
 import { Game } from '@/types/api'
+import { useTurnsCount } from '../../model/useTurnsCount'
 import styles from './RoundControl.module.scss'
 
 export function RoundControl({
@@ -20,6 +21,8 @@ export function RoundControl({
 	const invalidate = () => {
 		qc.invalidateQueries({ queryKey: ['game', game.id] })
 	}
+
+	const { data: turnsCountData } = useTurnsCount(game.id, game.round, playerId)
 
 	const start = useMutation({
 		mutationFn: async () => {
@@ -66,6 +69,8 @@ export function RoundControl({
 
 	return (
 		<div className={styles.buttons}>
+			<p className={styles.ready}>Стран готово: {turnsCountData?.turnsCount}</p>
+
 			<button
 				onClick={() => start.mutate()}
 				disabled={start.isPending || game.isPaused}

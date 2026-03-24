@@ -84,9 +84,10 @@ model GameTurn {
 
   round Int
 
-  updatedCities   String
-  attackedCities  String
-  protectedCities String @default("")
+  updatedCities       String @default("")
+  attackedCities      String @default("")
+  protectedCities     String @default("")
+  sanctionedCountries String @default("")
 
   nuclearTechnology Boolean @default(false)
   buildNukes        Int     @default(0)
@@ -150,6 +151,9 @@ model GameCountry {
   cities    GameCity[]
   gameTurns GameTurn[]
 
+  sanctionsFrom Sanction[] @relation("fromCountry")
+  sanctionsTo   Sanction[] @relation("toCountry")
+
   @@unique([gameId, templateId])
 }
 
@@ -194,9 +198,6 @@ model Team {
 
   players   GamePlayer[]
   countries GameCountry[]
-
-  sanctionsFrom Sanction[] @relation("fromTeam")
-  sanctionsTo   Sanction[] @relation("toTeam")
 }
 
 //////////////////////////////////////////////////////
@@ -219,14 +220,14 @@ model Player {
 model Sanction {
   id String @id @default(cuid())
 
-  fromTeam   Team   @relation("fromTeam", fields: [fromTeamId], references: [id])
-  fromTeamId String
+  fromCountry   GameCountry @relation("fromCountry", fields: [fromCountryId], references: [id])
+  fromCountryId String
 
-  toTeam   Team   @relation("toTeam", fields: [toTeamId], references: [id])
-  toTeamId String
+  toCountry   GameCountry @relation("toCountry", fields: [toCountryId], references: [id])
+  toCountryId String
 
   game   Game   @relation(fields: [gameId], references: [id])
   gameId String
 
-  @@unique([fromTeamId, toTeamId, gameId])
+  @@unique([fromCountryId, toCountryId, gameId])
 }

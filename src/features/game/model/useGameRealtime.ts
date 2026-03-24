@@ -11,7 +11,12 @@ export function useGameRealtime(gameId: string) {
 		const channel = pusherClient.subscribe(`game-${gameId}`)
 
 		const refetch = () => {
-			queryClient.invalidateQueries({ queryKey: ['game', gameId] })
+			queryClient.invalidateQueries({
+				queryKey: ['game', gameId],
+			})
+			queryClient.invalidateQueries({
+				queryKey: ['turns-count', gameId],
+			})
 		}
 
 		const events = [
@@ -24,6 +29,7 @@ export function useGameRealtime(gameId: string) {
 			'show_statistics',
 			'round_paused',
 			'round_resumed',
+			'turn_submited',
 		]
 
 		events.forEach(event => {

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { pusher } from '@/lib/pusher'
 
 export async function POST(req: Request) {
 	try {
@@ -11,6 +12,7 @@ export async function POST(req: Request) {
 			ecoProgram,
 			attackedCities,
 			protectedCities,
+			sanctionedCountries,
 		} = await req.json()
 
 		const player = await prisma.gamePlayer.findFirst({
@@ -40,6 +42,7 @@ export async function POST(req: Request) {
 				nuclearTechnology,
 				attackedCities,
 				protectedCities,
+				sanctionedCountries,
 			},
 			create: {
 				gameId,
@@ -51,8 +54,11 @@ export async function POST(req: Request) {
 				nuclearTechnology,
 				attackedCities,
 				protectedCities,
+				sanctionedCountries,
 			},
 		})
+
+		await pusher.trigger(`game-${gameId}`, 'turn_submited', {})
 
 		return Response.json({ ok: true })
 	} catch (e) {

@@ -28,6 +28,8 @@ export interface Country {
 	players: Player[]
 	nukes: number
 	hasNuclearProgram: boolean
+	sanctionsFrom: string[]
+	sanctionsTo: string[]
 }
 
 export interface FullCity extends GameCity {

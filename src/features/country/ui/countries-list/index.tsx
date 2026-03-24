@@ -1,24 +1,20 @@
-import { Country, Game } from '@/types/api'
+import { Country } from '@/types/api'
 import clsx from 'clsx'
 import styles from './CountriesList.module.scss'
 
 export const CountriesList = ({
-	game,
-	myCountry,
+	countries,
 	toggleCity,
 	attackedCities,
 	isPresident,
+	nukes,
 }: {
-	game: Game
-	myCountry: Country
+	countries: Country[]
 	toggleCity: (id: string) => void
 	attackedCities: string[]
 	isPresident: boolean
+	nukes: number
 }) => {
-	const countries = game.countries.filter(
-		country => country.players.length > 0 && country.id !== myCountry.id
-	)
-
 	return (
 		<section className={styles.section}>
 			<ul className={styles.countries}>
@@ -42,8 +38,9 @@ export const CountriesList = ({
 												onChange={() => toggleCity(city.id)}
 												checked={attackedCities.includes(city.id)}
 												disabled={
-													city.protection < 1 ||
-													myCountry.nukes <= attackedCities.length
+													!attackedCities.includes(city.id) &&
+													(city.protection < 1 ||
+														nukes <= attackedCities.length)
 												}
 											/>
 											Атаковать
