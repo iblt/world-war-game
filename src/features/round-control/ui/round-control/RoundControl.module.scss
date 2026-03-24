@@ -1,0 +1,24 @@
+.buttons {
+	position: fixed;
+	top: 0;
+	right: 0;
+	display: flex;
+	gap: 4px;
+	z-index: 10;
+}
+
+.button {
+	height: 40px;
+	padding: 20px;
+	border: none;
+	background: #2f2f33;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.3s;
+
+	&:not(:disabled):hover {
+		background: #46464b;
+	}
+}

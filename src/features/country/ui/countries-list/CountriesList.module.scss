@@ -1,0 +1,73 @@
+.countries {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.country {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	border-radius: 8px;
+	background: #272728;
+	padding: 8px;
+}
+
+.cities {
+	width: 100%;
+	display: flex;
+	gap: 8px;
+}
+
+.city {
+	position: relative;
+	border-radius: 8px;
+	background: #39393c;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	gap: 4px;
+	padding: 8px;
+	width: 100%;
+	flex-grow: 1;
+
+	&.destroyed {
+		pointer-events: none;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+
+		&::before {
+			position: absolute;
+			display: block;
+			content: '';
+			inset: 0;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			background: #000000c1;
+		}
+
+		&::after {
+			z-index: 2;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			content: 'Уничтожен';
+			display: block;
+			font-weight: 500;
+			font-size: 20px;
+		}
+	}
+}
+
+.checkbox {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+}

@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "Game" ADD COLUMN     "isPaused" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "pausedAt" TIMESTAMP(3),
+ADD COLUMN     "roundDuration" INTEGER NOT NULL DEFAULT 300,
+ADD COLUMN     "roundStartedAt" TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "GameCountry" ALTER COLUMN "budget" SET DEFAULT 1000,
+ALTER COLUMN "budget" SET DATA TYPE DOUBLE PRECISION;

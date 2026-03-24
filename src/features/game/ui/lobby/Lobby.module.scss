@@ -1,0 +1,38 @@
+.main {
+	display: flex;
+	gap: 20px;
+}
+
+.countries {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	list-style: none;
+	margin-top: 16px;
+}
+
+.country {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border-radius: 12px;
+	background: var(--light-background-color);
+	padding: 20px;
+}
+
+.country__header {
+	display: flex;
+	width: 400px;
+	gap: 4px;
+	justify-content: space-between;
+}
+
+.button {
+	width: 220px;
+}
+
+.waitList {
+	position: absolute;
+	top: 48px;
+	right: 20px;
+}

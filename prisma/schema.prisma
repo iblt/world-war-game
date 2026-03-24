@@ -1,103 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("PRISMA_DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma-client"
+//////////////////////////////////////////////////////
+// TEMPLATE
+//////////////////////////////////////////////////////
+
+model CountryTemplate {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  cities        CityTemplate[]
+  gameCountries GameCountry[]
 }
 
-model User {
-  id            Int      @id @default(autoincrement())
-  createdAt     DateTime @default(now())
-  name          String?  @unique
-  password      String
-  currentGameId Int?     // пользователь может быть без игры
-  CurrentGame   Game?    @relation("player", fields: [currentGameId], references: [id])
-  GamesCreated  Game[]   @relation("creator")
+model CityTemplate {
+  id   String @id @default(cuid())
+  name String
+
+  country   CountryTemplate @relation(fields: [countryId], references: [id])
+  countryId String
+
+  order           Int        @default(0)
+  baseLife        Int
+  baseDevelopment Int
+  gameCities      GameCity[]
+
+  @@unique([name, countryId])
+}
+
+//////////////////////////////////////////////////////
+// GAME
+//////////////////////////////////////////////////////
+
+enum GamePhase {
+  LOBBY
+  WAITING_COUNTRY
+  COUNTRY_MANAGEMENT
+  WAITING_UN
+  UN_STATS
 }
 
 model Game {
-  id              Int           @id @default(autoincrement())
-  name            String
-  password        String
-  ecologicalLevel Int           @default(75)
-  isActive        Boolean       @default(true)
-  creatorId       Int
-  creator         User          @relation("creator", fields: [creatorId], references: [id])
-  players         User[]        @relation("player")
-  GameCity        GameCity[]
-  GameCountry     GameCountry[]
-  Team            Team[]
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  ecology   Float     @default(90)
+  round     Int       @default(1)
+  maxRounds Int       @default(5)
+  phase     GamePhase @default(LOBBY)
+
+  joinCode String @unique
+
+  roundStartedAt DateTime?
+  roundDuration  Int       @default(600)
+
+  isPaused Boolean   @default(false)
+  pausedAt DateTime?
+
+  hostId String
+  host   Player @relation(fields: [hostId], references: [id])
+
+  teams     Team[]
+  countries GameCountry[]
+  cities    GameCity[]
+  players   GamePlayer[]
+  sanctions Sanction[]
+  gameTurns GameTurn[]
 }
 
-model Team {
-  id                Int         @id @default(autoincrement())
-  hasNuclearWeapons Boolean     @default(false)
-  bombsCount        Int         @default(0)
-  money             Int         @default(500)
-  gameCountryId     Int
-  gameId            Int
-  GameCountry       GameCountry @relation(fields: [gameCountryId], references: [id])
-  Game              Game        @relation(fields: [gameId], references: [id])
-  Sanctions         Sanctions[] @relation("TeamSanctions")
-  IncomingSanctions Sanctions[] @relation("SanctionedTeam")
+model GameTurn {
+  id String @id @default(cuid())
+
+  gameId String
+  game   Game   @relation(fields: [gameId], references: [id])
+
+  countryId String
+  country   GameCountry @relation(fields: [countryId], references: [id])
+
+  round Int
+
+  updatedCities   String
+  attackedCities  String
+  protectedCities String @default("")
+
+  nuclearTechnology Boolean @default(false)
+  buildNukes        Int     @default(0)
+  ecoProgram        Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@unique([gameId, countryId, round])
 }
 
-model Country {
-  id          Int           @id @default(autoincrement())
-  name        String
-  City        City[]
-  GameCountry GameCountry[]
+//////////////////////////////////////////////////////
+// GAME PLAYER ⭐
+//////////////////////////////////////////////////////
 
-  @@unique([name]) // глобально уникальные страны
+model GamePlayer {
+  id String @id @default(cuid())
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
+
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId String
+
+  // null = в комнате ожидания
+  country   GameCountry? @relation(fields: [countryId], references: [id])
+  countryId String?
+
+  isPresident Boolean @default(false)
+
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String?
+
+  joinedAt DateTime @default(now())
+
+  @@unique([gameId, playerId])
 }
 
-model City {
-  id        Int     @id @default(autoincrement())
-  name      String
-  countryId Int
-  country   Country @relation(fields: [countryId], references: [id])
-
-  GameCity GameCity[]
-
-  @@unique([name, countryId]) // уникальность внутри страны
-}
-
-model GameCity {
-  id               Int  @id @default(autoincrement())
-  gameId           Int
-  cityId           Int
-  game             Game @relation(fields: [gameId], references: [id])
-  city             City @relation(fields: [cityId], references: [id])
-  protectionLevel  Int  @default(1)
-  standartOfLiving Int  @default(100)
-  revenue          Int  @default(100)
-  developmentLevel Int  @default(0)
-
-  @@unique([gameId, cityId])
-}
+//////////////////////////////////////////////////////
+// COUNTRY IN GAME
+//////////////////////////////////////////////////////
 
 model GameCountry {
-  id        Int     @id @default(autoincrement())
-  gameId    Int
-  countryId Int
-  game      Game    @relation(fields: [gameId], references: [id])
-  country   Country @relation(fields: [countryId], references: [id])
-  isActive  Boolean @default(true)
+  id String @id @default(cuid())
 
-  Team      Team[]
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
 
-  @@unique([gameId, countryId])
+  template   CountryTemplate @relation(fields: [templateId], references: [id])
+  templateId String
+
+  isActive          Boolean @default(true)
+  budget            Float   @default(1000)
+  nukes             Int     @default(0)
+  hasNuclearProgram Boolean @default(false)
+
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String?
+
+  players GamePlayer[]
+
+  cities    GameCity[]
+  gameTurns GameTurn[]
+
+  @@unique([gameId, templateId])
 }
 
-model Sanctions {
-  id               Int  @id @default(autoincrement())
-  teamId           Int
-  sanctionedTeamId Int
-  team             Team @relation("TeamSanctions", fields: [teamId], references: [id])
-  sanctionedTeam   Team @relation("SanctionedTeam", fields: [sanctionedTeamId], references: [id])
+//////////////////////////////////////////////////////
+// CITY
+//////////////////////////////////////////////////////
 
-  @@unique([teamId, sanctionedTeamId])
+model GameCity {
+  id String @id @default(cuid())
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
+
+  template   CityTemplate @relation(fields: [templateId], references: [id])
+  templateId String
+
+  country   GameCountry @relation(fields: [countryId], references: [id])
+  countryId String
+
+  life        Float
+  development Float
+
+  protection Int @default(1)
+
+  @@unique([gameId, templateId])
+}
+
+//////////////////////////////////////////////////////
+// TEAM
+//////////////////////////////////////////////////////
+
+model Team {
+  id String @id @default(cuid())
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
+
+  money Float @default(0)
+
+  hasBombProgram Boolean @default(false)
+  bombsCount     Int     @default(0)
+
+  players   GamePlayer[]
+  countries GameCountry[]
+
+  sanctionsFrom Sanction[] @relation("fromTeam")
+  sanctionsTo   Sanction[] @relation("toTeam")
+}
+
+//////////////////////////////////////////////////////
+// PLAYER
+//////////////////////////////////////////////////////
+
+model Player {
+  id   String @id @default(cuid())
+  name String
+
+  games GamePlayer[]
+
+  hostedGames Game[]
+}
+
+//////////////////////////////////////////////////////
+// SANCTIONS
+//////////////////////////////////////////////////////
+
+model Sanction {
+  id String @id @default(cuid())
+
+  fromTeam   Team   @relation("fromTeam", fields: [fromTeamId], references: [id])
+  fromTeamId String
+
+  toTeam   Team   @relation("toTeam", fields: [toTeamId], references: [id])
+  toTeamId String
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId String
+
+  @@unique([fromTeamId, toTeamId, gameId])
 }

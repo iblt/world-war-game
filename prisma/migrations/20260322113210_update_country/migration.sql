@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "GameCountry" ADD COLUMN     "budget" INTEGER NOT NULL DEFAULT 1000;
