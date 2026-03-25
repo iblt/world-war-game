@@ -16,58 +16,60 @@ export const Results = ({ gameId }: { gameId: string }) => {
 		<div className={styles.body}>
 			<h1>📜 Итоги игры</h1>
 
-			{turns.map(turn => (
-				<div key={turn.round} className={styles.round}>
-					<h2>Раунд {turn.round}</h2>
+			<ul className={styles.rounds}>
+				{turns.map(turn => (
+					<li key={turn.round} className={styles.round}>
+						<h2>Раунд {turn.round}</h2>
 
-					<div className={styles.countries}>
-						{turn.countries.map(country => (
-							<div key={country.countryName} className={styles.country}>
-								<h3>{country.countryName}</h3>
+						<ul className={styles.countries}>
+							{turn.countries.map(country => (
+								<li key={country.countryName} className={styles.country}>
+									<h3>{country.countryName}</h3>
 
-								<ul>
-									{country.actions.buildNukes > 0 && (
-										<li>💣 Построено бомб: {country.actions.buildNukes}</li>
-									)}
+									<ul className={styles.actions}>
+										{country.actions.buildNukes > 0 && (
+											<li>💣 Построено бомб: {country.actions.buildNukes}</li>
+										)}
 
-									{country.actions.nuclearTechnology && (
-										<li>☢️ Разработана ядерная технология</li>
-									)}
+										{country.actions.nuclearTechnology && (
+											<li>☢️ Разработана ядерная технология</li>
+										)}
 
-									{country.actions.ecoProgram && (
-										<li>🌱 Экологическая программа</li>
-									)}
+										{country.actions.ecoProgram && (
+											<li>🌱 Экологическая программа</li>
+										)}
 
-									{country.actions.updatedCities.length > 0 && (
-										<li>
-											🏙 Улучшены: {country.actions.updatedCities.join(', ')}
-										</li>
-									)}
+										{country.actions.updatedCities.length > 0 && (
+											<li>
+												🏙 Улучшены: {country.actions.updatedCities.join(', ')}
+											</li>
+										)}
 
-									{country.actions.protectedCities.length > 0 && (
-										<li>
-											🛡 Защита: {country.actions.protectedCities.join(', ')}
-										</li>
-									)}
+										{country.actions.protectedCities.length > 0 && (
+											<li>
+												🛡 Защита: {country.actions.protectedCities.join(', ')}
+											</li>
+										)}
 
-									{country.actions.attackedCities.length > 0 && (
-										<li>
-											🔥 Атака: {country.actions.attackedCities.join(', ')}
-										</li>
-									)}
+										{country.actions.attackedCities.length > 0 && (
+											<li>
+												🔥 Атака: {country.actions.attackedCities.join(', ')}
+											</li>
+										)}
 
-									{country.actions.sanctionedCountries.length > 0 && (
-										<li>
-											📉 Санкции против:{' '}
-											{country.actions.sanctionedCountries.join(', ')}
-										</li>
-									)}
-								</ul>
-							</div>
-						))}
-					</div>
-				</div>
-			))}
+										{country.actions.sanctionedCountries.length > 0 && (
+											<li>
+												📉 Санкции против:{' '}
+												{country.actions.sanctionedCountries.join(', ')}
+											</li>
+										)}
+									</ul>
+								</li>
+							))}
+						</ul>
+					</li>
+				))}
+			</ul>
 		</div>
 	)
 }

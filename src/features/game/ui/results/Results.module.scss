@@ -1,0 +1,42 @@
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.rounds {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	list-style: none;
+}
+
+.round {
+	background: var(--light-background-color);
+	border-radius: 8px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.countries {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	list-style: none;
+}
+
+.country {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.actions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	list-style: none;
+	padding-left: 8px;
+}

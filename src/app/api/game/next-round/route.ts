@@ -18,11 +18,7 @@ export async function POST(req: Request) {
 
 		switch (game.phase) {
 			case 'LOBBY':
-				if (game.round === 5) {
-					nextPhase = 'RESULTS'
-				} else {
-					nextPhase = 'COUNTRY_MANAGEMENT'
-				}
+				nextPhase = 'COUNTRY_MANAGEMENT'
 				break
 
 			case 'COUNTRY_MANAGEMENT':
@@ -39,8 +35,12 @@ export async function POST(req: Request) {
 				break
 
 			case 'UN_STATS':
-				nextPhase = 'COUNTRY_MANAGEMENT'
-				nextRound += 1
+				if (game.round === 5) {
+					nextPhase = 'RESULTS'
+				} else {
+					nextPhase = 'COUNTRY_MANAGEMENT'
+					nextRound += 1
+				}
 				break
 		}
 

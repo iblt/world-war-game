@@ -29,7 +29,7 @@ export const SanctionsList = ({
 					{countries.map(country => (
 						<li key={country.id} className={styles.country}>
 							<p>{country.name}</p>
-							<p>{sanctionedCountries.includes(country.id) ? 'Да' : 'Нет'}</p>
+							<p>{sanctionsFrom.includes(country.id) ? 'Да' : 'Нет'}</p>
 						</li>
 					))}
 				</ul>
@@ -47,7 +47,7 @@ export const SanctionsList = ({
 									type='checkbox'
 									id={country.id}
 									onChange={() => toggleSanctionCountry(country.id)}
-									checked={sanctionsFrom.includes(country.id)}
+									checked={sanctionedCountries.includes(country.id)}
 									disabled={allDisabled}
 								/>
 							</label>
