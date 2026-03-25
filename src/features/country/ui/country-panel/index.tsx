@@ -102,11 +102,12 @@ export function CountryPanel({
 		return <div className={styles.overlay}>Ваша страна уничтожена</div>
 	}
 
-	const allDisabled = isDestroyed || isSubmitted || submitTurn.isPending
-
 	const isPresident = myCountry.players.some(
 		p => p.playerId === playerId && p.isPresident
 	)
+
+	const allDisabled =
+		isDestroyed || isSubmitted || submitTurn.isPending || !isPresident
 
 	const toggleCity = (cityId: string) => {
 		setSelectedCities(prev =>
