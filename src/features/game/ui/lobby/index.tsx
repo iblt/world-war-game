@@ -4,6 +4,7 @@ import { getPlayerId } from '@/lib/cookie'
 import { Game } from '@/types/api'
 import { Button } from '@/ui/button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useKick } from '../../model/useKick'
 import styles from './Lobby.module.scss'
 
 export function Lobby({ game }: { game: Game }) {
@@ -25,6 +26,7 @@ export function Lobby({ game }: { game: Game }) {
 			qc.invalidateQueries({ queryKey: ['game', game.id] })
 		},
 	})
+	const { mutate: kickPlayer } = useKick(game.id)
 
 	const waitingPlayers = game.players.filter(p => !p.countryId)
 
@@ -46,7 +48,7 @@ export function Lobby({ game }: { game: Game }) {
 										disabled={
 											hasPresident &&
 											c.players.findIndex(
-												player => player.playerId === playerId
+												player => player.playerId === playerId,
 											) > -1
 										}
 										onClick={() => mutation.mutate(c.id)}
@@ -72,7 +74,14 @@ export function Lobby({ game }: { game: Game }) {
 				<h4>Ожидание</h4>
 
 				{waitingPlayers.map(p => (
-					<div key={p.id}>{p.name}</div>
+					<div key={p.id} className={styles.player}>
+						{p.name}{' '}
+						{playerId === game.hostId && (
+							<button className={styles.kick} onClick={() => kickPlayer(p.id)}>
+								❌
+							</button>
+						)}
+					</div>
 				))}
 			</div>
 		</div>

@@ -36,3 +36,15 @@
 	top: 48px;
 	right: 20px;
 }
+
+.player {
+	display: flex;
+	justify-content: space-between;
+	gap: 4px;
+}
+
+.kick {
+	padding: 2px;
+	border: none;
+	background: none;
+}

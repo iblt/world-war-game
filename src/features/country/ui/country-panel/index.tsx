@@ -39,8 +39,8 @@ export function CountryPanel({
 	const [sanctionedCountries, setSanctionedCountries] = useState<string[]>(
 		game.countries.find(
 			country =>
-				country.players.findIndex(player => player.playerId === playerId) > -1
-		)?.sanctionsTo ?? []
+				country.players.findIndex(player => player.playerId === playerId) > -1,
+		)?.sanctionsTo ?? [],
 	)
 
 	const [isEcologyProgram, setEcologyProgram] = useState(false)
@@ -56,7 +56,7 @@ export function CountryPanel({
 
 		setSelectedCities(turn.updatedCities ? turn.updatedCities.split(',') : [])
 		setSanctionedCountries(
-			turn.sanctionedCountries ? turn.sanctionedCountries.split(',') : []
+			turn.sanctionedCountries ? turn.sanctionedCountries.split(',') : [],
 		)
 
 		setNukes(turn.buildNukes || 0)
@@ -89,7 +89,7 @@ export function CountryPanel({
 	if (!playerId) return null
 
 	const myCountry = game.countries.find(c =>
-		c.players.some(p => p.playerId === playerId)
+		c.players.some(p => p.playerId === playerId),
 	)
 
 	if (!myCountry) {
@@ -105,14 +105,14 @@ export function CountryPanel({
 	const allDisabled = isDestroyed || isSubmitted || submitTurn.isPending
 
 	const isPresident = myCountry.players.some(
-		p => p.playerId === playerId && p.isPresident
+		p => p.playerId === playerId && p.isPresident,
 	)
 
 	const toggleCity = (cityId: string) => {
 		setSelectedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -120,7 +120,7 @@ export function CountryPanel({
 		setProtectedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -128,7 +128,7 @@ export function CountryPanel({
 		setSanctionedCountries(prev =>
 			prev.includes(countryId)
 				? prev.filter(id => id !== countryId)
-				: [...prev, countryId]
+				: [...prev, countryId],
 		)
 	}
 
@@ -136,7 +136,7 @@ export function CountryPanel({
 		setAttackedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -181,17 +181,15 @@ export function CountryPanel({
 
 		const canBuyRockets = Math.max(
 			0,
-			Math.trunc((budget + nukes * NUKE_PRICE) / NUKE_PRICE)
+			Math.trunc((budget + nukes * NUKE_PRICE) / NUKE_PRICE),
 		)
 
 		setNukes(Math.min(i + 1, canBuyRockets))
 	}
 
 	const countries = game.countries.filter(
-		country => country.players.length > 0 && country.id !== myCountry.id
+		country => country.players.length > 0 && country.id !== myCountry.id,
 	)
-
-	console.log(myCountry)
 
 	return (
 		<section className={styles.container}>

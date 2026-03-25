@@ -16,10 +16,13 @@ export async function POST(req: Request) {
 		let nextPhase = game.phase
 		let nextRound = game.round
 
-		// 🔥 FSM
 		switch (game.phase) {
 			case 'LOBBY':
-				nextPhase = 'COUNTRY_MANAGEMENT'
+				if (game.round === 5) {
+					nextPhase = 'RESULTS'
+				} else {
+					nextPhase = 'COUNTRY_MANAGEMENT'
+				}
 				break
 
 			case 'COUNTRY_MANAGEMENT':

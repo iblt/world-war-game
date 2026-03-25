@@ -52,3 +52,36 @@ export type GameEvents =
 	| 'show_statistics'
 	| 'round_started'
 	| 'round_ended'
+
+export interface TurnsResult {
+	turns: {
+		countries: {
+			countryName: string
+			actions: {
+				buildNukes: number
+				ecoProgram: boolean
+				nuclearTechnology: boolean
+				updatedCities: string[]
+				protectedCities: string[]
+				attackedCities: string[]
+				sanctionedCountries: string[]
+			}
+		}[]
+		round: number
+	}[]
+}
+
+export interface TurnMapItem {
+	countries: {
+		countryName: string
+		actions: {
+			buildNukes: number
+			ecoProgram: boolean
+			nuclearTechnology: boolean
+			updatedCities: string[]
+			protectedCities: string[]
+			attackedCities: string[]
+			sanctionedCountries: string[]
+		}
+	}[]
+}

@@ -12,6 +12,7 @@ import { RoundTimer } from '@/features/round-control/ui/round-timer'
 import { getPlayerId } from '@/lib/cookie'
 import { GamePhase } from '@prisma/client'
 import { Lobby } from '../lobby'
+import { Results } from '../results'
 import { UNStats } from '../un-stats'
 import { Waiting } from '../waiting'
 
@@ -35,7 +36,9 @@ export function GameScreen({ gameId }: { gameId: string }) {
 
 	return (
 		<main className={styles.main}>
-			<RoundControl game={game} playerId={playerId} />
+			{playerId === game.hostId && (
+				<RoundControl game={game} playerId={playerId} />
+			)}
 			<RoundTimer game={game} />
 
 			{(() => {
@@ -51,6 +54,9 @@ export function GameScreen({ gameId }: { gameId: string }) {
 
 					case GamePhase.UN_STATS:
 						return <UNStats game={game} />
+
+					case GamePhase.RESULTS:
+						return <Results gameId={game.id} />
 
 					default:
 						return <div>Неизвестная фаза</div>

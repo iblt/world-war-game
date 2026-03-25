@@ -43,6 +43,7 @@ enum GamePhase {
   COUNTRY_MANAGEMENT
   WAITING_UN
   UN_STATS
+  RESULTS
 }
 
 model Game {

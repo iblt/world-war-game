@@ -34,7 +34,6 @@ export const options = {
 
 export function UNStats({ game }: { game: Game }) {
 	const countries = game.countries.filter(country => country.players.length > 0)
-	console.log(countries)
 	const countriesStats = countries.map(country => {
 		const avgLife =
 			country.cities.length > 0

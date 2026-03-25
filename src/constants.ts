@@ -1,5 +1,4 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY ?? 'baseSecret'
 
 export const ROUTES = {
 	HOME: '/',

@@ -69,14 +69,14 @@ export function RoundControl({
 
 	return (
 		<div className={styles.buttons}>
-			<p className={styles.ready}>Стран готово: {turnsCountData?.turnsCount}</p>
+			<p className={styles.ready}>{turnsCountData?.turnsCount} ✔</p>
 
 			<button
 				onClick={() => start.mutate()}
 				disabled={start.isPending || game.isPaused}
 				className={styles.button}
 			>
-				Старт раунда
+				↺
 			</button>
 
 			<button
@@ -84,7 +84,7 @@ export function RoundControl({
 				disabled={pause.isPending || game.isPaused}
 				className={styles.button}
 			>
-				Пауза
+				❚❚
 			</button>
 
 			<button
@@ -92,7 +92,7 @@ export function RoundControl({
 				disabled={resume.isPending || !game.isPaused}
 				className={styles.button}
 			>
-				Продолжить
+				▶
 			</button>
 
 			<button
@@ -100,7 +100,7 @@ export function RoundControl({
 				className={styles.button}
 				disabled={nextPhase.isPending}
 			>
-				Следующий этап →
+				⏭
 			</button>
 		</div>
 	)
