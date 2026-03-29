@@ -1,6 +1,10 @@
 .section {
 	display: flex;
-	gap: 40px;
+	gap: 24px;
+
+	@media screen and (max-width: 1279px) {
+		gap: 16px;
+	}
 }
 
 .block {

@@ -6,18 +6,35 @@
 	& input[type='checkbox'] {
 		accent-color: var(--background-color);
 	}
+
+	@media screen and (max-width: 767px) {
+		gap: 16px;
+	}
 }
 
 .top {
 	display: flex;
-	gap: 40px;
+	gap: 24px;
 	justify-content: space-between;
+
+	@media screen and (max-width: 1279px) {
+		gap: 16px;
+	}
+
+	@media screen and (max-width: 767px) {
+		flex-direction: column;
+	}
 }
 
 .cities {
-	display: flex;
+	width: 100%;
+	display: grid;
 	gap: 16px;
-	flex-wrap: wrap;
+	grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+
+	@media screen and (max-width: 1279px) {
+		gap: 12px;
+	}
 }
 
 .cityCard {
@@ -68,15 +85,25 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	font-size: 20px;
+	font-size: 1.25rem;
 	padding: 20px;
 	border-radius: 8px;
 	background: var(--light-background-color);
+	min-width: 385px;
+
+	@media screen and (max-width: 1279px) {
+		min-width: 340px;
+	}
 }
 
 .header {
 	display: flex;
 	gap: 12px;
+
+	@media screen and (max-width: 1279px) {
+		flex-direction: column;
+		gap: 8px;
+	}
 }
 
 .checkbox {

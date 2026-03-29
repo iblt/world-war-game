@@ -14,9 +14,5 @@ export default async function GamePage({
 		return redirect('/')
 	}
 
-	return (
-		<main>
-			<GameScreen gameId={id} />
-		</main>
-	)
+	return <GameScreen gameId={id} />
 }

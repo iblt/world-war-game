@@ -27,10 +27,10 @@ export function GameScreen({ gameId }: { gameId: string }) {
 		setPlayerId(getPlayerId())
 	}, [])
 
-	if (isLoading) return <div>Загрузка...</div>
-	if (!data) return <div>Ошибка</div>
+	if (isLoading) return <Waiting text='Загрузка...' />
+	if (!data) return <Waiting text='Ошибка' />
 
-	if (!playerId) return <div>Инициализация...</div>
+	if (!playerId) return <Waiting text='Инициализация...' />
 
 	const { game } = data
 

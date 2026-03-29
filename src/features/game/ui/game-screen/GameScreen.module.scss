@@ -1,5 +1,9 @@
 .main {
 	padding: 20px 40px;
+
+	@media screen and (max-width: 1279px) {
+		padding: 20px;
+	}
 }
 
 .chart {

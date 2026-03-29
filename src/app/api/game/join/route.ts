@@ -9,8 +9,6 @@ export async function POST(req: Request) {
 			where: { joinCode: code },
 		})
 
-		console.log('game', game)
-
 		if (!game) {
 			return new Response('Game not found', { status: 404 })
 		}
@@ -19,16 +17,12 @@ export async function POST(req: Request) {
 			data: { name: playerName },
 		})
 
-		console.log('player', player)
-
 		const gamePlayer = await prisma.gamePlayer.create({
 			data: {
 				gameId: game.id,
 				playerId: player.id,
 			},
 		})
-
-		console.log('gamePlayer', gamePlayer)
 
 		await pusher.trigger(`game-${game.id}`, 'player_joined', {
 			player: {
@@ -46,7 +40,7 @@ export async function POST(req: Request) {
 			{ status: 200 },
 		)
 	} catch (e) {
-		console.log(e)
+		console.error(e)
 		return Response.json({ message: 'Server Error' }, { status: 500 })
 	}
 }
