@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 export function useTurnsCount(
 	gameId: string,
 	round: number,
-	playerId?: string
+	playerId?: string,
 ) {
 	return useQuery({
 		queryKey: ['turns-count', gameId, round],
@@ -18,5 +18,6 @@ export function useTurnsCount(
 			return res.json() as Promise<{ turnsCount: number }>
 		},
 		enabled: !!playerId,
+		staleTime: 1000 * 60,
 	})
 }
