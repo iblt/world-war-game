@@ -72,6 +72,11 @@ export async function POST(req: Request) {
 				? turn.sanctionedCountries.split(',')
 				: []
 
+			const sendedMoney = turn.sendedMoney.split(',').map(item => ({
+				countryId: item.split(':')[0],
+				amount: Number(item.split(':')[1]),
+			}))
+
 			if (sanctionedCountries.length > 0) {
 				const current = sanctions.get(turn.countryId) ?? []
 
@@ -84,6 +89,17 @@ export async function POST(req: Request) {
 				countryNukesSpent.set(
 					turn.countryId,
 					(countryNukesSpent.get(turn.countryId) || 0) + attackedCities.length
+				)
+			}
+
+			for (const { countryId, amount } of sendedMoney) {
+				countryBudgetChanges.set(
+					countryId,
+					(countryBudgetChanges.get(countryId) || 0) + amount
+				)
+				countryBudgetChanges.set(
+					turn.countryId,
+					(countryBudgetChanges.get(turn.countryId) || 0) - amount
 				)
 			}
 
@@ -214,7 +230,7 @@ export async function POST(req: Request) {
 				)
 			}
 
-			const newEcology = game.ecology + ecologyDelta
+			const newEcology = Math.min(100, game.ecology + ecologyDelta)
 
 			await tx.game.update({
 				where: { id: gameId },

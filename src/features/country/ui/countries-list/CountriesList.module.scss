@@ -65,6 +65,35 @@
 	}
 }
 
+.header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.sendCoins {
+	position: absolute;
+	top: 0;
+	right: 4px;
+	display: flex;
+	gap: 8px;
+}
+
+.sendCoins__input {
+	width: 60px;
+	border-radius: 4px;
+	background: var(--border-color);
+	border: none;
+	color: #fff;
+	padding: 2px 4px;
+
+	&:focus-visible {
+		outline: 1px solid var(--text-color);
+	}
+}
+
 .checkbox {
 	display: flex;
 	justify-content: center;

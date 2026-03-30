@@ -8,19 +8,47 @@ export const CountriesList = ({
 	attackedCities,
 	isPresident,
 	nukes,
+	allDisabled,
+	updateSendedMoney,
+	sendedMoney,
 }: {
 	countries: Country[]
 	toggleCity: (id: string) => void
 	attackedCities: string[]
 	isPresident: boolean
 	nukes: number
+	allDisabled: boolean
+	updateSendedMoney: (countryId: string, amount: string) => void
+	sendedMoney: { toCountry: string; amount: number }[]
 }) => {
 	return (
 		<section className={styles.section}>
 			<ul className={styles.countries}>
 				{countries.map((country, i) => (
 					<li key={i} className={styles.country}>
-						{country.name}
+						<header className={styles.header}>
+							<span>{country.name}</span>
+							<label className={styles.sendCoins}>
+								<span>Отправить монеты</span>
+								<input
+									type='text'
+									inputMode='numeric'
+									pattern='[0-9]*'
+									value={
+										sendedMoney.find(item => item.toCountry === country.id)
+											?.amount || ''
+									}
+									onChange={e => {
+										updateSendedMoney(
+											country.id,
+											e.target.value.replace(/\D/g, '')
+										)
+									}}
+									className={styles.sendCoins__input}
+									disabled={allDisabled}
+								/>
+							</label>
+						</header>
 						<ul className={styles.cities}>
 							{country.cities.map(city => (
 								<li

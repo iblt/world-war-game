@@ -42,6 +42,9 @@ export function CountryPanel({
 				country.players.findIndex(player => player.playerId === playerId) > -1
 		)?.sanctionsFrom ?? []
 	)
+	const [sendedMoney, setSendedMoney] = useState<
+		{ toCountry: string; amount: number }[]
+	>([])
 
 	const [isEcologyProgram, setEcologyProgram] = useState(false)
 	const [isNuclearProgram, setNuclearProgram] = useState(false)
@@ -66,7 +69,7 @@ export function CountryPanel({
 
 	const submitTurn = useMutation({
 		mutationFn: async () => {
-			if (isDestroyed) return
+			if (allDisabled) return
 
 			await fetch('/api/game/submit-turn', {
 				method: 'POST',
@@ -80,6 +83,9 @@ export function CountryPanel({
 					attackedCities: attackedCities.join(','),
 					protectedCities: protectedCities.join(','),
 					sanctionedCountries: sanctionedCountries.join(','),
+					sendedMoney: sendedMoney
+						.map(item => `${item.toCountry}:${item.amount}`)
+						.join(','),
 				}),
 			})
 		},
@@ -141,6 +147,26 @@ export function CountryPanel({
 		)
 	}
 
+	const updateSendedMoney = (countryId: string, amount: string) => {
+		setSendedMoney(prev => {
+			const currentCountryMoney =
+				sendedMoney.find(item => item.toCountry === countryId)?.amount || 0
+			if (currentCountryMoney === Number(amount)) return prev
+			const currentBudget = budget + currentCountryMoney
+			const realAmount = Math.min(Number(amount), currentBudget)
+			if (realAmount <= 0) {
+				return prev.filter(item => item.toCountry !== countryId)
+			}
+			const existing = prev.find(item => item.toCountry === countryId)
+			if (existing) {
+				return prev.map(item =>
+					item.toCountry === countryId ? { ...item, amount: realAmount } : item
+				)
+			}
+			return [...prev, { toCountry: countryId, amount: realAmount }]
+		})
+	}
+
 	const cities = myCountry.cities.map(city => {
 		const life = calculateLife({
 			baseLife: city.template.baseLife,
@@ -172,7 +198,8 @@ export function CountryPanel({
 		protectedCities.length * SHIELD_PRICE -
 		nukes * NUKE_PRICE -
 		(isNuclearProgram ? NUCLEAR_PROGRAM_PRICE : 0) -
-		(isEcologyProgram ? ECOLOGY_PRICE : 0)
+		(isEcologyProgram ? ECOLOGY_PRICE : 0) -
+		sendedMoney.reduce((acc, item) => acc + item.amount, 0)
 
 	const handleRocketClick = (i: number) => {
 		if (nukes === i + 1) {
@@ -320,6 +347,9 @@ export function CountryPanel({
 				attackedCities={attackedCities}
 				toggleCity={toggleAttackCity}
 				isPresident={isPresident}
+				allDisabled={allDisabled}
+				sendedMoney={sendedMoney}
+				updateSendedMoney={updateSendedMoney}
 			/>
 
 			{isPresident && (

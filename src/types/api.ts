@@ -65,6 +65,10 @@ export interface TurnsResult {
 				protectedCities: string[]
 				attackedCities: string[]
 				sanctionedCountries: string[]
+				sendedMoney: {
+					toCountry: string
+					amount: number
+				}[]
 			}
 		}[]
 		round: number
@@ -82,6 +86,10 @@ export interface TurnMapItem {
 			protectedCities: string[]
 			attackedCities: string[]
 			sanctionedCountries: string[]
+			sendedMoney: {
+				toCountry: string
+				amount: number
+			}[]
 		}
 	}[]
 }

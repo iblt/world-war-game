@@ -34,6 +34,8 @@ export function GameScreen({ gameId }: { gameId: string }) {
 
 	const { game } = data
 
+	console.log('Game data:', game)
+
 	return (
 		<main className={styles.main}>
 			{playerId === game.hostId && (

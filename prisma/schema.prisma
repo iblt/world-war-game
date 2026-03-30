@@ -85,10 +85,11 @@ model GameTurn {
 
   round Int
 
+  sendedMoney         String @default("")
   updatedCities       String @default("")
   attackedCities      String @default("")
   protectedCities     String @default("")
-  sanctionedCountries String @default("")
+  sanctionedCountries String @default("")  
 
   nuclearTechnology Boolean @default(false)
   buildNukes        Int     @default(0)

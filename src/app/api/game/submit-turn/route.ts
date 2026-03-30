@@ -13,6 +13,7 @@ export async function POST(req: Request) {
 			attackedCities,
 			protectedCities,
 			sanctionedCountries,
+			sendedMoney,
 		} = await req.json()
 
 		const player = await prisma.gamePlayer.findFirst({
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
 				attackedCities,
 				protectedCities,
 				sanctionedCountries,
+				sendedMoney,
 			},
 			create: {
 				gameId,
@@ -55,6 +57,7 @@ export async function POST(req: Request) {
 				attackedCities,
 				protectedCities,
 				sanctionedCountries,
+				sendedMoney,
 			},
 		})
 
