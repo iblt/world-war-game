@@ -65,6 +65,7 @@ export async function POST(req: Request) {
 					protectedCities: true,
 					nuclearTechnology: true,
 					sanctionedCountries: true,
+					sendedMoney: true,
 					country: {
 						select: {
 							template: {
@@ -94,6 +95,21 @@ export async function POST(req: Request) {
 				.filter(Boolean) as string[]
 		}
 
+		const mapSendedMoney = (str: string | null, map: Map<string, string>) => {
+			if (!str) return []
+
+			return str
+				.split(',')
+				.map(action => ({
+					toCountry: map.get(action.split(':')[0]),
+					amount: Number(action.split(':')[1]),
+				}))
+				.filter(act => act.toCountry !== undefined) as {
+				toCountry: string
+				amount: number
+			}[]
+		}
+
 		const turnsMap = turnResponse.reduce(
 			(acc, turn) => {
 				const round = turn.round
@@ -115,6 +131,7 @@ export async function POST(req: Request) {
 							turn.sanctionedCountries,
 							countryMap,
 						),
+						sendedMoney: mapSendedMoney(turn.sendedMoney, countryMap),
 					},
 				})
 

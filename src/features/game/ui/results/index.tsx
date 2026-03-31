@@ -1,6 +1,7 @@
 'use client'
 
 import { getPlayerId } from '@/lib/cookie'
+import { getNoun } from '@/lib/getNoun'
 import { useGameResults } from '../../model/useResults'
 import styles from './Results.module.scss'
 
@@ -61,6 +62,16 @@ export const Results = ({ gameId }: { gameId: string }) => {
 											<li>
 												📉 Санкции против:{' '}
 												{country.actions.sanctionedCountries.join(', ')}
+											</li>
+										)}
+
+										{country.actions.sendedMoney.length > 0 && (
+											<li>
+												📉 Отправлены монеты:{' '}
+												{country.actions.sendedMoney.map(
+													action =>
+														`${action.toCountry} ${action.amount} ${getNoun(action.amount, 'монету', 'монеты', 'монет')}`,
+												)}
 											</li>
 										)}
 									</ul>
