@@ -12,15 +12,15 @@
 	width: 40px;
 	height: 40px;
 	border: none;
-	background: #2f2f33;
-	color: #fff;
+	background: var(--border-color);
+	color: var(--text-color);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: background 0.3s;
 
 	&:not(:disabled):hover {
-		background: #46464b;
+		background: var(--light-border-color);
 	}
 }
 

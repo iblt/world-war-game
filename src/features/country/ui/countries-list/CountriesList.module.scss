@@ -10,7 +10,7 @@
 	align-items: center;
 	gap: 8px;
 	border-radius: 8px;
-	background: #272728;
+	background: var(--border-color);
 	padding: 8px;
 }
 
@@ -23,7 +23,7 @@
 .city {
 	position: relative;
 	border-radius: 8px;
-	background: #39393c;
+	background: var(--light-border-color);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -84,9 +84,9 @@
 .sendCoins__input {
 	width: 60px;
 	border-radius: 4px;
-	background: var(--border-color);
+	background: var(--background-color);
 	border: none;
-	color: #fff;
+	color: var(--text-color);
 	padding: 2px 4px;
 
 	&:focus-visible {

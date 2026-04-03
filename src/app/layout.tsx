@@ -1,4 +1,5 @@
 import { QueryProvider } from '@/lib/query'
+import Switch from '@/ui/switch'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
@@ -26,6 +27,7 @@ export default function RootLayout({
 			</head>
 			<body className={montserratSans.className}>
 				<QueryProvider>{children}</QueryProvider>
+				<Switch />
 			</body>
 		</html>
 	)

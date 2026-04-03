@@ -17,12 +17,8 @@ export async function POST(req: Request) {
 			where: { id: gameId },
 		})
 
-		if (!game) {
+		if (!game || game.phase !== 'RESULTS') {
 			return Response.json({ message: 'Game not founded' }, { status: 404 })
-		}
-
-		if (game.hostId !== player.playerId) {
-			return Response.json({ message: 'Unathorized' }, { status: 401 })
 		}
 
 		const [cities, countriesList, turnResponse] = await Promise.all([
@@ -85,7 +81,7 @@ export async function POST(req: Request) {
 
 		const mapIdsToNames = (
 			idsString: string | null,
-			map: Map<string, string>,
+			map: Map<string, string>
 		) => {
 			if (!idsString) return []
 
@@ -110,35 +106,32 @@ export async function POST(req: Request) {
 			}[]
 		}
 
-		const turnsMap = turnResponse.reduce(
-			(acc, turn) => {
-				const round = turn.round
+		const turnsMap = turnResponse.reduce((acc, turn) => {
+			const round = turn.round
 
-				if (!acc[round]) {
-					acc[round] = { countries: [] }
-				}
+			if (!acc[round]) {
+				acc[round] = { countries: [] }
+			}
 
-				acc[round].countries.push({
-					countryName: turn.country.template.name,
-					actions: {
-						buildNukes: turn.buildNukes,
-						ecoProgram: turn.ecoProgram,
-						nuclearTechnology: turn.nuclearTechnology,
-						updatedCities: mapIdsToNames(turn.updatedCities, cityMap),
-						protectedCities: mapIdsToNames(turn.protectedCities, cityMap),
-						attackedCities: mapIdsToNames(turn.attackedCities, cityMap),
-						sanctionedCountries: mapIdsToNames(
-							turn.sanctionedCountries,
-							countryMap,
-						),
-						sendedMoney: mapSendedMoney(turn.sendedMoney, countryMap),
-					},
-				})
+			acc[round].countries.push({
+				countryName: turn.country.template.name,
+				actions: {
+					buildNukes: turn.buildNukes,
+					ecoProgram: turn.ecoProgram,
+					nuclearTechnology: turn.nuclearTechnology,
+					updatedCities: mapIdsToNames(turn.updatedCities, cityMap),
+					protectedCities: mapIdsToNames(turn.protectedCities, cityMap),
+					attackedCities: mapIdsToNames(turn.attackedCities, cityMap),
+					sanctionedCountries: mapIdsToNames(
+						turn.sanctionedCountries,
+						countryMap
+					),
+					sendedMoney: mapSendedMoney(turn.sendedMoney, countryMap),
+				},
+			})
 
-				return acc
-			},
-			{} as Record<number, TurnMapItem>,
-		)
+			return acc
+		}, {} as Record<number, TurnMapItem>)
 
 		const turns = Object.entries(turnsMap)
 			.sort(([a], [b]) => Number(a) - Number(b))
