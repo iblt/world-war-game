@@ -37,6 +37,11 @@ export async function POST(req: Request) {
 							},
 						},
 					},
+					_count: {
+						select: {
+							sanctionsTo: true,
+						},
+					},
 				},
 			}),
 		])
@@ -88,18 +93,18 @@ export async function POST(req: Request) {
 
 				countryNukesSpent.set(
 					turn.countryId,
-					(countryNukesSpent.get(turn.countryId) || 0) + attackedCities.length,
+					(countryNukesSpent.get(turn.countryId) || 0) + attackedCities.length
 				)
 			}
 
 			for (const { countryId, amount } of sendedMoney) {
 				countryBudgetChanges.set(
 					countryId,
-					(countryBudgetChanges.get(countryId) || 0) + amount,
+					(countryBudgetChanges.get(countryId) || 0) + amount
 				)
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - amount,
+					(countryBudgetChanges.get(turn.countryId) || 0) - amount
 				)
 			}
 
@@ -108,7 +113,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 150,
+					(countryBudgetChanges.get(turn.countryId) || 0) - 150
 				)
 			}
 
@@ -117,7 +122,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 300,
+					(countryBudgetChanges.get(turn.countryId) || 0) - 300
 				)
 			}
 
@@ -131,7 +136,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 500,
+					(countryBudgetChanges.get(turn.countryId) || 0) - 500
 				)
 			}
 
@@ -140,13 +145,13 @@ export async function POST(req: Request) {
 
 				countryNukes.set(
 					turn.countryId,
-					(countryNukes.get(turn.countryId) || 0) + turn.buildNukes,
+					(countryNukes.get(turn.countryId) || 0) + turn.buildNukes
 				)
 
 				countryBudgetChanges.set(
 					turn.countryId,
 					(countryBudgetChanges.get(turn.countryId) || 0) -
-						500 * turn.buildNukes,
+						500 * turn.buildNukes
 				)
 			}
 
@@ -155,7 +160,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 200,
+					(countryBudgetChanges.get(turn.countryId) || 0) - 200
 				)
 			}
 		}
@@ -189,6 +194,15 @@ export async function POST(req: Request) {
 								baseLife: true,
 							},
 						},
+						country: {
+							select: {
+								_count: {
+									select: {
+										sanctionsTo: true,
+									},
+								},
+							},
+						},
 					},
 				})
 
@@ -198,7 +212,7 @@ export async function POST(req: Request) {
 							fromCountryId: fromId,
 							toCountryId: id,
 							gameId,
-						})),
+						}))
 				)
 
 				await tx.sanction.deleteMany({
@@ -217,7 +231,7 @@ export async function POST(req: Request) {
 					const life = calculateLife({
 						baseLife: city.template.baseLife,
 						ecology: game.ecology,
-						sanctionsCount: 0,
+						sanctionsCount: city.country._count.sanctionsTo,
 						development: city.development,
 					})
 
@@ -227,7 +241,7 @@ export async function POST(req: Request) {
 
 					incomeMap.set(
 						city.countryId,
-						(incomeMap.get(city.countryId) || 0) + income,
+						(incomeMap.get(city.countryId) || 0) + income
 					)
 				}
 
@@ -294,7 +308,7 @@ export async function POST(req: Request) {
 									life: calculateLife({
 										baseLife: city.template.baseLife,
 										ecology: game.ecology,
-										sanctionsCount: 0,
+										sanctionsCount: country._count.sanctionsTo,
 										development,
 									}),
 								},
@@ -306,7 +320,7 @@ export async function POST(req: Request) {
 			{
 				timeout: 15000,
 				maxWait: 5000,
-			},
+			}
 		)
 
 		return Response.json({ ok: true })
