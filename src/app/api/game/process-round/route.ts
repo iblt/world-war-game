@@ -88,18 +88,18 @@ export async function POST(req: Request) {
 
 				countryNukesSpent.set(
 					turn.countryId,
-					(countryNukesSpent.get(turn.countryId) || 0) + attackedCities.length
+					(countryNukesSpent.get(turn.countryId) || 0) + attackedCities.length,
 				)
 			}
 
 			for (const { countryId, amount } of sendedMoney) {
 				countryBudgetChanges.set(
 					countryId,
-					(countryBudgetChanges.get(countryId) || 0) + amount
+					(countryBudgetChanges.get(countryId) || 0) + amount,
 				)
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - amount
+					(countryBudgetChanges.get(turn.countryId) || 0) - amount,
 				)
 			}
 
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 150
+					(countryBudgetChanges.get(turn.countryId) || 0) - 150,
 				)
 			}
 
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 300
+					(countryBudgetChanges.get(turn.countryId) || 0) - 300,
 				)
 			}
 
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 500
+					(countryBudgetChanges.get(turn.countryId) || 0) - 500,
 				)
 			}
 
@@ -140,13 +140,13 @@ export async function POST(req: Request) {
 
 				countryNukes.set(
 					turn.countryId,
-					(countryNukes.get(turn.countryId) || 0) + turn.buildNukes
+					(countryNukes.get(turn.countryId) || 0) + turn.buildNukes,
 				)
 
 				countryBudgetChanges.set(
 					turn.countryId,
 					(countryBudgetChanges.get(turn.countryId) || 0) -
-						500 * turn.buildNukes
+						500 * turn.buildNukes,
 				)
 			}
 
@@ -155,7 +155,7 @@ export async function POST(req: Request) {
 
 				countryBudgetChanges.set(
 					turn.countryId,
-					(countryBudgetChanges.get(turn.countryId) || 0) - 200
+					(countryBudgetChanges.get(turn.countryId) || 0) - 200,
 				)
 			}
 		}
@@ -179,129 +179,135 @@ export async function POST(req: Request) {
 			updatesMap.set(update.id, current)
 		}
 
-		await prisma.$transaction(async tx => {
-			const citiesBefore = await tx.gameCity.findMany({
-				where: { gameId },
-				include: {
-					template: {
-						select: {
-							baseLife: true,
+		await prisma.$transaction(
+			async tx => {
+				const citiesBefore = await tx.gameCity.findMany({
+					where: { gameId },
+					include: {
+						template: {
+							select: {
+								baseLife: true,
+							},
 						},
 					},
-				},
-			})
-
-			const sanctionsList = Array.from(sanctions.entries()).flatMap(
-				([fromId, toIds]) =>
-					toIds.map(id => ({
-						fromCountryId: fromId,
-						toCountryId: id,
-						gameId,
-					}))
-			)
-
-			await tx.sanction.deleteMany({
-				where: { gameId },
-			})
-
-			if (sanctionsList.length > 0) {
-				await tx.sanction.createMany({
-					data: sanctionsList,
-				})
-			}
-
-			const incomeMap = new Map<string, number>()
-
-			for (const city of citiesBefore.filter(city => city.protection > 0)) {
-				const life = calculateLife({
-					baseLife: city.template.baseLife,
-					ecology: game.ecology,
-					sanctionsCount: 0,
-					development: city.development,
 				})
 
-				const income = calculateIncome({
-					life,
-				})
-
-				incomeMap.set(
-					city.countryId,
-					(incomeMap.get(city.countryId) || 0) + income
+				const sanctionsList = Array.from(sanctions.entries()).flatMap(
+					([fromId, toIds]) =>
+						toIds.map(id => ({
+							fromCountryId: fromId,
+							toCountryId: id,
+							gameId,
+						})),
 				)
-			}
 
-			const newEcology = Math.min(100, game.ecology + ecologyDelta)
-
-			await tx.game.update({
-				where: { id: gameId },
-				data: { ecology: newEcology },
-			})
-
-			for (const country of countries) {
-				await tx.gameCountry.update({
-					where: { id: country.id },
-					data: {
-						budget:
-							country.budget +
-							(incomeMap.get(country.id) || 0) +
-							(countryBudgetChanges.get(country.id) || 0),
-
-						nukes: {
-							increment:
-								(countryNukes.get(country.id) || 0) -
-								(countryNukesSpent.get(country.id) || 0),
-						},
-
-						hasNuclearProgram: countryHasNuclear.has(country.id)
-							? true
-							: undefined,
-					},
+				await tx.sanction.deleteMany({
+					where: { gameId },
 				})
 
-				for (const city of country.cities) {
-					const update = updatesMap.get(city.id)
+				if (sanctionsList.length > 0) {
+					await tx.sanction.createMany({
+						data: sanctionsList,
+					})
+				}
 
-					const attacksCount = update?.attacks ?? 0
-					const hasShield = update?.shield ?? false
-					const isDeveloped = update?.dev ?? false
+				const incomeMap = new Map<string, number>()
 
-					let finalProtection = city.protection
+				for (const city of citiesBefore.filter(city => city.protection > 0)) {
+					const life = calculateLife({
+						baseLife: city.template.baseLife,
+						ecology: game.ecology,
+						sanctionsCount: 0,
+						development: city.development,
+					})
 
-					if (hasShield) {
-						finalProtection = 2
-					}
+					const income = calculateIncome({
+						life,
+					})
 
-					finalProtection -= attacksCount
+					incomeMap.set(
+						city.countryId,
+						(incomeMap.get(city.countryId) || 0) + income,
+					)
+				}
 
-					const development = city.development + (isDeveloped ? 20 : 0)
+				const newEcology = Math.min(100, game.ecology + ecologyDelta)
 
-					if (finalProtection <= 0) {
-						await tx.gameCity.update({
-							where: { id: city.id },
-							data: {
-								life: 0,
-								development: 0,
-								protection: 0,
+				await tx.game.update({
+					where: { id: gameId },
+					data: { ecology: newEcology },
+				})
+
+				for (const country of countries) {
+					await tx.gameCountry.update({
+						where: { id: country.id },
+						data: {
+							budget:
+								country.budget +
+								(incomeMap.get(country.id) || 0) +
+								(countryBudgetChanges.get(country.id) || 0),
+
+							nukes: {
+								increment:
+									(countryNukes.get(country.id) || 0) -
+									(countryNukesSpent.get(country.id) || 0),
 							},
-						})
-					} else {
-						await tx.gameCity.update({
-							where: { id: city.id },
-							data: {
-								protection: finalProtection,
-								development,
-								life: calculateLife({
-									baseLife: city.template.baseLife,
-									ecology: game.ecology,
-									sanctionsCount: 0,
+
+							hasNuclearProgram: countryHasNuclear.has(country.id)
+								? true
+								: undefined,
+						},
+					})
+
+					for (const city of country.cities) {
+						const update = updatesMap.get(city.id)
+
+						const attacksCount = update?.attacks ?? 0
+						const hasShield = update?.shield ?? false
+						const isDeveloped = update?.dev ?? false
+
+						let finalProtection = city.protection
+
+						if (hasShield) {
+							finalProtection = 2
+						}
+
+						finalProtection -= attacksCount
+
+						const development = city.development + (isDeveloped ? 20 : 0)
+
+						if (finalProtection <= 0) {
+							await tx.gameCity.update({
+								where: { id: city.id },
+								data: {
+									life: 0,
+									development: 0,
+									protection: 0,
+								},
+							})
+						} else {
+							await tx.gameCity.update({
+								where: { id: city.id },
+								data: {
+									protection: finalProtection,
 									development,
-								}),
-							},
-						})
+									life: calculateLife({
+										baseLife: city.template.baseLife,
+										ecology: game.ecology,
+										sanctionsCount: 0,
+										development,
+									}),
+								},
+							})
+						}
 					}
 				}
-			}
-		})
+			},
+			{
+				timeout: 15000,
+				maxWait: 5000,
+			},
+		)
 
 		return Response.json({ ok: true })
 	} catch (e) {
