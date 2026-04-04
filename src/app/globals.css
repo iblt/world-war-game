@@ -5,6 +5,9 @@
 	--light-text-color: #212124;
 	--background-color: #fcfafe;
 	--light-background-color: #e9e2f0;
+	--red-text-color: #e30c0c;
+	--orange-color: #e3740c;
+	--green-color: #16c035;
 	background: var(--background-color);
 	color: var(--text-color);
 	font-family: Montserrat;
@@ -18,6 +21,9 @@
 		--light-text-color: #e9e2f0;
 		--background-color: #181718;
 		--light-background-color: #1d1d1f;
+		--red-text-color: #dd4a4a;
+		--orange-color: #e3740c;
+		--green-color: #16c035;
 		background: var(--background-color);
 		color: var(--text-color);
 	}
@@ -30,6 +36,9 @@ html.dark {
 	--light-text-color: #e9e2f0;
 	--background-color: #181718;
 	--light-background-color: #1d1d1f;
+	--red-text-color: #dd4a4a;
+	--orange-color: #e3740c;
+	--green-color: #16c035;
 	background: var(--background-color);
 	color: var(--text-color);
 }
@@ -41,6 +50,9 @@ html.light {
 	--light-text-color: #212124;
 	--background-color: #fcfafe;
 	--light-background-color: #e9e2f0;
+	--red-text-color: #e30c0c;
+	--orange-color: #e3740c;
+	--green-color: #16c035;
 	background: var(--background-color);
 	color: var(--text-color);
 }

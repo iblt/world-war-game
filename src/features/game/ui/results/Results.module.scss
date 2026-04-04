@@ -7,7 +7,7 @@
 .rounds {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 12px;
 	list-style: none;
 }
 
@@ -17,20 +17,20 @@
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 16px;
 }
 
 .countries {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 14px;
 	list-style: none;
 }
 
 .country {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 8px;
 }
 
 .actions {

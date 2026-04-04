@@ -38,6 +38,10 @@
 	}
 }
 
+.country.sanctioned {
+	color: var(--red-text-color);
+}
+
 .checkbox {
 	accent-color: var(--background-color);
 }

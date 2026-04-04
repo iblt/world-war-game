@@ -10,6 +10,7 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2'
 
+import clsx from 'clsx'
 import styles from './UNStats.module.scss'
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartDataLabels)
@@ -52,22 +53,32 @@ export function UNStats({ game }: { game: Game }) {
 			{
 				label: 'Средний уровень жизни',
 				data: countriesStats.map(c => c.life),
-				backgroundColor: 'rgba(238, 73, 108, 0.758)',
+				backgroundColor: 'rgba(73, 101, 238, 0.758)',
 			},
 		],
 	}
+
+	const ecology = game.ecology.toFixed(0)
+	const ecologyColor =
+		game.ecology < 60 ? 'red' : game.ecology < 80 ? 'orange' : 'green'
 
 	return (
 		<div className={styles.container}>
 			<h1>🌍 Генассамблея ООН</h1>
 
 			<div className={styles.global}>
-				<div>Экология: {game.ecology.toFixed(0)}%</div>
+				<div>
+					Экология: <span className={styles[ecologyColor]}>{ecology}%</span>
+				</div>
 				<div>Раунд: {game.round}</div>
 			</div>
 
 			<div className={styles.chart}>
-				<Bar data={chartData} options={options} />
+				<Bar
+					data={chartData}
+					options={options}
+					style={{ width: 600, height: 300 }}
+				/>
 			</div>
 
 			<div className={styles.countries}>
@@ -77,7 +88,13 @@ export function UNStats({ game }: { game: Game }) {
 
 						{country.cities.map(city => (
 							<div key={city.id} className={styles.city}>
-								<span>{city.template.name}</span>
+								<span
+									className={clsx({
+										[styles.city__title_destroyed]: city.protection < 1,
+									})}
+								>
+									{city.template.name}
+								</span>
 
 								{city.protection < 1 ? (
 									<span className={styles.destroyed}>❌</span>

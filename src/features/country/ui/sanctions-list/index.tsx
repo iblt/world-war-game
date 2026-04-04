@@ -1,4 +1,5 @@
 import { Country } from '@/types/api'
+import clsx from 'clsx'
 import styles from './SanctionsList.module.scss'
 
 interface SanctionsListProps
@@ -27,7 +28,12 @@ export const SanctionsList = ({
 				<p>Санкции наложили:</p>
 				<ul className={styles.list}>
 					{countries.map(country => (
-						<li key={country.id} className={styles.country}>
+						<li
+							key={country.id}
+							className={clsx(styles.country, {
+								[styles.sanctioned]: sanctionsFrom.includes(country.id),
+							})}
+						>
 							<p>{country.name}</p>
 							<p>{sanctionsFrom.includes(country.id) ? 'Да' : 'Нет'}</p>
 						</li>

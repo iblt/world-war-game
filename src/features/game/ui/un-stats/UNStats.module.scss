@@ -40,3 +40,29 @@
 	gap: 4px;
 	justify-content: space-between;
 }
+
+.city__title_destroyed {
+	color: var(--red-text-color);
+	border-radius: 4px;
+}
+
+.red,
+.green,
+.orange {
+	font-weight: 500;
+	border-radius: 4px;
+	padding: 2px 6px;
+	color: #fff;
+}
+
+.red {
+	background: var(--red-text-color);
+}
+
+.orange {
+	background: var(--orange-color);
+}
+
+.green {
+	background: var(--green-color);
+}

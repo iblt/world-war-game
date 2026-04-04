@@ -3,6 +3,7 @@
 import { getPlayerId } from '@/lib/cookie'
 import { getNoun } from '@/lib/getNoun'
 import { useGameResults } from '../../model/useResults'
+import { Waiting } from '../waiting'
 import styles from './Results.module.scss'
 
 export const Results = ({ gameId }: { gameId: string }) => {
@@ -11,7 +12,7 @@ export const Results = ({ gameId }: { gameId: string }) => {
 
 	const turns = data?.turns
 
-	if (!turns) return <div>Загрузка...</div>
+	if (!turns) return <Waiting text={'Загрузка...'} />
 
 	return (
 		<div className={styles.body}>
@@ -48,13 +49,14 @@ export const Results = ({ gameId }: { gameId: string }) => {
 
 										{country.actions.protectedCities.length > 0 && (
 											<li>
-												🛡 Защита: {country.actions.protectedCities.join(', ')}
+												🛡 Защищены: {country.actions.protectedCities.join(', ')}
 											</li>
 										)}
 
 										{country.actions.attackedCities.length > 0 && (
 											<li>
-												🔥 Атака: {country.actions.attackedCities.join(', ')}
+												🔥 Атакаваны:{' '}
+												{country.actions.attackedCities.join(', ')}
 											</li>
 										)}
 
@@ -67,10 +69,15 @@ export const Results = ({ gameId }: { gameId: string }) => {
 
 										{country.actions.sendedMoney.length > 0 && (
 											<li>
-												📉 Отправлены монеты:{' '}
+												💲 Отправлены монеты:{' '}
 												{country.actions.sendedMoney.map(
 													action =>
-														`${action.toCountry} ${action.amount} ${getNoun(action.amount, 'монету', 'монеты', 'монет')}`,
+														`${action.toCountry} ${action.amount} ${getNoun(
+															action.amount,
+															'монету',
+															'монеты',
+															'монет'
+														)}`
 												)}
 											</li>
 										)}

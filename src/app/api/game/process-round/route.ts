@@ -189,7 +189,7 @@ export async function POST(req: Request) {
 		await prisma.$transaction(
 			async tx => {
 				const citiesBefore = await tx.gameCity.findMany({
-					where: { gameId },
+					where: { gameId, country: { players: { some: {} } } },
 					include: {
 						template: {
 							select: {
