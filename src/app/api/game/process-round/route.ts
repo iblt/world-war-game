@@ -77,10 +77,12 @@ export async function POST(req: Request) {
 				? turn.sanctionedCountries.split(',')
 				: []
 
-			const sendedMoney = turn.sendedMoney.split(',').map(item => ({
-				countryId: item.split(':')[0],
-				amount: Number(item.split(':')[1]),
-			}))
+			const sendedMoney = turn.sendedMoney
+				? turn.sendedMoney.split(',').map(item => ({
+						countryId: item.split(':')[0],
+						amount: Number(item.split(':')[1]),
+				  }))
+				: []
 
 			if (sanctionedCountries.length > 0) {
 				const current = sanctions.get(turn.countryId) ?? []

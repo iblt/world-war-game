@@ -22,6 +22,16 @@ export async function POST(req: Request) {
 				break
 
 			case 'COUNTRY_MANAGEMENT':
+				await prisma.game.update({
+					where: { id: gameId },
+					data: {
+						isPaused: true,
+						pausedAt: new Date(),
+					},
+				})
+
+				await pusher.trigger(`game-${gameId}`, 'round_paused', {})
+
 				nextPhase = 'WAITING_UN'
 				break
 
@@ -38,6 +48,17 @@ export async function POST(req: Request) {
 				if (game.round === 5) {
 					nextPhase = 'RESULTS'
 				} else {
+					await prisma.game.update({
+						where: { id: gameId },
+						data: {
+							roundStartedAt: new Date(),
+							isPaused: false,
+							pausedAt: null,
+						},
+					})
+
+					await pusher.trigger(`game-${gameId}`, 'round_started', {})
+
 					nextPhase = 'COUNTRY_MANAGEMENT'
 					nextRound += 1
 				}

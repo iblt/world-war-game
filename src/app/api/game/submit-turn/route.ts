@@ -28,6 +28,8 @@ export async function POST(req: Request) {
 			where: { id: gameId },
 		})
 
+		console.log('submit turn sended money', sendedMoney)
+
 		await prisma.gameTurn.upsert({
 			where: {
 				gameId_countryId_round: {
