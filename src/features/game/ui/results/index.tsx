@@ -49,7 +49,8 @@ export const Results = ({ gameId }: { gameId: string }) => {
 
 										{country.actions.protectedCities.length > 0 && (
 											<li>
-												🛡 Защищены: {country.actions.protectedCities.join(', ')}
+												🛡 Защищены:{' '}
+												{country.actions.protectedCities.join(', ')}
 											</li>
 										)}
 
@@ -71,13 +72,13 @@ export const Results = ({ gameId }: { gameId: string }) => {
 											<li>
 												💲 Отправлены монеты:{' '}
 												{country.actions.sendedMoney.map(
-													action =>
+													(action, i) =>
 														`${action.toCountry} ${action.amount} ${getNoun(
 															action.amount,
 															'монету',
 															'монеты',
-															'монет'
-														)}`
+															'монет',
+														)}${i === country.actions.sendedMoney.length - 1 ? '' : ', '}`,
 												)}
 											</li>
 										)}
