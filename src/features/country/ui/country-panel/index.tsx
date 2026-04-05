@@ -40,8 +40,8 @@ export function CountryPanel({
 	const [sanctionedCountries, setSanctionedCountries] = useState<string[]>(
 		game.countries.find(
 			country =>
-				country.players.findIndex(player => player.playerId === playerId) > -1
-		)?.sanctionsFrom ?? []
+				country.players.findIndex(player => player.playerId === playerId) > -1,
+		)?.sanctionsFrom ?? [],
 	)
 	const [sendedMoney, setSendedMoney] = useState<
 		{ toCountry: string; amount: number }[]
@@ -60,19 +60,19 @@ export function CountryPanel({
 
 		setSelectedCities(turn.updatedCities ? turn.updatedCities.split(',') : [])
 		setSanctionedCountries(
-			turn.sanctionedCountries ? turn.sanctionedCountries.split(',') : []
+			turn.sanctionedCountries ? turn.sanctionedCountries.split(',') : [],
 		)
 		setSendedMoney(
 			turn.sendedMoney
 				? turn.sendedMoney.split(',').map(item => {
 						const [toCountry, amount] = item.split(':')
 						return { toCountry, amount: Number(amount) }
-				  })
-				: []
+					})
+				: [],
 		)
 		setAttackedCities(turn.attackedCities ? turn.attackedCities.split(',') : [])
 		setProtectedCities(
-			turn.protectedCities ? turn.protectedCities.split(',') : []
+			turn.protectedCities ? turn.protectedCities.split(',') : [],
 		)
 
 		setNukes(turn.buildNukes || 0)
@@ -108,7 +108,7 @@ export function CountryPanel({
 	if (!playerId) return null
 
 	const myCountry = game.countries.find(c =>
-		c.players.some(p => p.playerId === playerId)
+		c.players.some(p => p.playerId === playerId),
 	)
 
 	if (!myCountry) {
@@ -122,7 +122,7 @@ export function CountryPanel({
 	}
 
 	const isPresident = myCountry.players.some(
-		p => p.playerId === playerId && p.isPresident
+		p => p.playerId === playerId && p.isPresident,
 	)
 
 	const allDisabled =
@@ -132,7 +132,7 @@ export function CountryPanel({
 		setSelectedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -140,7 +140,7 @@ export function CountryPanel({
 		setProtectedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -148,7 +148,7 @@ export function CountryPanel({
 		setSanctionedCountries(prev =>
 			prev.includes(countryId)
 				? prev.filter(id => id !== countryId)
-				: [...prev, countryId]
+				: [...prev, countryId],
 		)
 	}
 
@@ -156,7 +156,7 @@ export function CountryPanel({
 		setAttackedCities(prev =>
 			prev.includes(cityId)
 				? prev.filter(id => id !== cityId)
-				: [...prev, cityId]
+				: [...prev, cityId],
 		)
 	}
 
@@ -173,7 +173,7 @@ export function CountryPanel({
 			const existing = prev.find(item => item.toCountry === countryId)
 			if (existing) {
 				return prev.map(item =>
-					item.toCountry === countryId ? { ...item, amount: realAmount } : item
+					item.toCountry === countryId ? { ...item, amount: realAmount } : item,
 				)
 			}
 			return [...prev, { toCountry: countryId, amount: realAmount }]
@@ -222,14 +222,14 @@ export function CountryPanel({
 
 		const canBuyRockets = Math.max(
 			0,
-			Math.trunc((budget + nukes * NUKE_PRICE) / NUKE_PRICE)
+			Math.trunc((budget + nukes * NUKE_PRICE) / NUKE_PRICE),
 		)
 
 		setNukes(Math.min(i + 1, canBuyRockets))
 	}
 
 	const countries = game.countries.filter(
-		country => country.players.length > 0 && country.id !== myCountry.id
+		country => country.players.length > 0 && country.id !== myCountry.id,
 	)
 
 	return (
@@ -306,7 +306,7 @@ export function CountryPanel({
 														? 0.3
 														: 1
 												}
-												stroke={isEcologyProgram ? '#1fc03d' : 'currentColor'}
+												stroke={isProtected ? '#1fc03d' : 'currentColor'}
 											/>
 											Защитить ({SHIELD_PRICE})
 										</label>
