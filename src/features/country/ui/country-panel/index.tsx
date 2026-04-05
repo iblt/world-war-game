@@ -13,6 +13,7 @@ import { IconRocket } from '@/ui/icons/Rocket'
 import { IconShield } from '@/ui/icons/Shield'
 import { GameTurn } from '@prisma/client'
 import clsx from 'clsx'
+import { Hammer, Radiation, Shield, Sprout } from 'lucide-react'
 import { CountriesList } from '../countries-list'
 import { SanctionsList } from '../sanctions-list'
 import styles from './CountryPanel.module.scss'
@@ -183,7 +184,7 @@ export function CountryPanel({
 		const life = calculateLife({
 			baseLife: city.template.baseLife,
 			ecology: game.ecology,
-			sanctionsCount: 0,
+			sanctionsCount: myCountry.sanctionsTo.length,
 			development: city.development,
 		})
 
@@ -270,6 +271,18 @@ export function CountryPanel({
 													allDisabled ||
 													(!isSelected && budget < CITY_UPGRADE_PRICE)
 												}
+												hidden
+											/>
+											<Hammer
+												size={24}
+												fill={isSelected ? '#6178df63' : 'transparent'}
+												strokeOpacity={
+													allDisabled ||
+													(!isSelected && budget < CITY_UPGRADE_PRICE)
+														? 0.3
+														: 1
+												}
+												stroke={isSelected ? '#1f3cc0' : 'currentColor'}
 											/>
 											Улучшить ({CITY_UPGRADE_PRICE})
 										</label>
@@ -282,8 +295,20 @@ export function CountryPanel({
 													(!isProtected && budget < SHIELD_PRICE) ||
 													city.protection !== 1
 												}
+												hidden
 											/>
-											Защитить город ({SHIELD_PRICE})
+											<Shield
+												size={24}
+												fill={isProtected ? '#5ce174' : 'transparent'}
+												strokeOpacity={
+													(!isProtected && budget < SHIELD_PRICE) ||
+													city.protection !== 1
+														? 0.3
+														: 1
+												}
+												stroke={isEcologyProgram ? '#1fc03d' : 'currentColor'}
+											/>
+											Защитить ({SHIELD_PRICE})
 										</label>
 									</>
 								)}
@@ -302,19 +327,42 @@ export function CountryPanel({
 
 			<div className={styles.nuclear}>
 				<header className={styles.header}>
-					<label className={styles.checkbox}>
-						<input
-							type='checkbox'
-							onChange={() => setNuclearProgram(prev => !prev)}
-							checked={myCountry.hasNuclearProgram || isNuclearProgram}
-							disabled={
-								allDisabled ||
-								myCountry.hasNuclearProgram ||
-								(!isNuclearProgram && NUCLEAR_PROGRAM_PRICE > budget)
-							}
-						/>
-						Ядерная технология ({NUCLEAR_PROGRAM_PRICE})
-					</label>
+					{!myCountry.hasNuclearProgram && (
+						<label className={styles.checkbox}>
+							<input
+								type='checkbox'
+								onChange={() => setNuclearProgram(prev => !prev)}
+								checked={myCountry.hasNuclearProgram || isNuclearProgram}
+								disabled={
+									allDisabled ||
+									myCountry.hasNuclearProgram ||
+									(!isNuclearProgram && NUCLEAR_PROGRAM_PRICE > budget)
+								}
+								hidden
+							/>
+							<Radiation
+								size={24}
+								fill={
+									myCountry.hasNuclearProgram || isNuclearProgram
+										? '#dbc0705f'
+										: 'transparent'
+								}
+								strokeOpacity={
+									allDisabled ||
+									myCountry.hasNuclearProgram ||
+									(!isNuclearProgram && NUCLEAR_PROGRAM_PRICE > budget)
+										? 0.3
+										: 1
+								}
+								stroke={
+									myCountry.hasNuclearProgram || isNuclearProgram
+										? '#c0981f'
+										: 'currentColor'
+								}
+							/>
+							Ядерная технология ({NUCLEAR_PROGRAM_PRICE})
+						</label>
+					)}
 					<label className={styles.checkbox}>
 						<input
 							type='checkbox'
@@ -323,6 +371,17 @@ export function CountryPanel({
 							disabled={
 								allDisabled || (!isEcologyProgram && ECOLOGY_PRICE > budget)
 							}
+							hidden
+						/>
+						<Sprout
+							size={24}
+							fill={isEcologyProgram ? '#5ce174' : 'transparent'}
+							strokeOpacity={
+								allDisabled || (!isEcologyProgram && ECOLOGY_PRICE > budget)
+									? 0.3
+									: 1
+							}
+							stroke={isEcologyProgram ? '#1fc03d' : 'currentColor'}
 						/>
 						Экологическая программа ({ECOLOGY_PRICE}) +15% к экологии
 					</label>
@@ -339,7 +398,7 @@ export function CountryPanel({
 									disabled={allDisabled || !myCountry.hasNuclearProgram}
 									className={styles.rocket}
 								>
-									<IconRocket fill={nukes > i ? '#dd6060' : '#a7a4ba'} />
+									<IconRocket fill={nukes > i ? '#dd4a4a' : '#a7a4ba'} />
 								</button>
 							))}
 						</div>

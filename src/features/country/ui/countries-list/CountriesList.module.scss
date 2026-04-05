@@ -99,4 +99,10 @@
 	justify-content: center;
 	align-items: center;
 	gap: 4px;
+	cursor: pointer;
+	color: var(--text-color);
+
+	&:has(:disabled) {
+		cursor: default;
+	}
 }

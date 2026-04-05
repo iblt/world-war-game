@@ -208,25 +208,6 @@ export async function POST(req: Request) {
 					},
 				})
 
-				const sanctionsList = Array.from(sanctions.entries()).flatMap(
-					([fromId, toIds]) =>
-						toIds.map(id => ({
-							fromCountryId: fromId,
-							toCountryId: id,
-							gameId,
-						}))
-				)
-
-				await tx.sanction.deleteMany({
-					where: { gameId },
-				})
-
-				if (sanctionsList.length > 0) {
-					await tx.sanction.createMany({
-						data: sanctionsList,
-					})
-				}
-
 				const incomeMap = new Map<string, number>()
 
 				for (const city of citiesBefore.filter(city => city.protection > 0)) {
@@ -245,6 +226,25 @@ export async function POST(req: Request) {
 						city.countryId,
 						(incomeMap.get(city.countryId) || 0) + income
 					)
+				}
+
+				const sanctionsList = Array.from(sanctions.entries()).flatMap(
+					([fromId, toIds]) =>
+						toIds.map(id => ({
+							fromCountryId: fromId,
+							toCountryId: id,
+							gameId,
+						}))
+				)
+
+				await tx.sanction.deleteMany({
+					where: { gameId },
+				})
+
+				if (sanctionsList.length > 0) {
+					await tx.sanction.createMany({
+						data: sanctionsList,
+					})
 				}
 
 				const newEcology = Math.min(100, game.ecology + ecologyDelta)

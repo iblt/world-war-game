@@ -106,8 +106,10 @@
 
 .checkbox {
 	display: flex;
+	align-items: center;
 	gap: 6px;
 	cursor: pointer;
+	color: var(--text-color);
 
 	&:has(:disabled) {
 		cursor: default;

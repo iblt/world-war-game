@@ -1,5 +1,6 @@
 import { Country } from '@/types/api'
 import clsx from 'clsx'
+import { Rocket } from 'lucide-react'
 import styles from './CountriesList.module.scss'
 
 export const CountriesList = ({
@@ -69,6 +70,27 @@ export const CountriesList = ({
 													!attackedCities.includes(city.id) &&
 													(city.protection < 1 ||
 														nukes <= attackedCities.length)
+												}
+												hidden
+											/>
+											<Rocket
+												size={24}
+												fill={
+													attackedCities.includes(city.id)
+														? '#e15c5c'
+														: 'transparent'
+												}
+												strokeOpacity={
+													!attackedCities.includes(city.id) &&
+													(city.protection < 1 ||
+														nukes <= attackedCities.length)
+														? 0.3
+														: 1
+												}
+												stroke={
+													attackedCities.includes(city.id)
+														? '#c01f1f'
+														: 'currentColor'
 												}
 											/>
 											Атаковать
