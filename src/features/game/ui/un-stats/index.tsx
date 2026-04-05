@@ -16,6 +16,8 @@ import styles from './UNStats.module.scss'
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartDataLabels)
 
 export const options = {
+	responsive: true,
+	maintainAspectRatio: false,
 	plugins: {
 		datalabels: {
 			display: true,
@@ -26,9 +28,7 @@ export const options = {
 				weight: 'bold' as const,
 				size: 14,
 			},
-			formatter: (value: number) => {
-				return `${value.toFixed(0)}%`
-			},
+			formatter: (value: number) => `${value.toFixed(0)}%`,
 		},
 	},
 }
@@ -74,11 +74,7 @@ export function UNStats({ game }: { game: Game }) {
 			</div>
 
 			<div className={styles.chart}>
-				<Bar
-					data={chartData}
-					options={options}
-					style={{ width: 600, height: 300 }}
-				/>
+				<Bar data={chartData} options={options} />
 			</div>
 
 			<div className={styles.countries}>
